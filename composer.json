@@ -1,0 +1,26 @@
+{
+    "name": "zaboy-res",
+
+    "require": {
+
+    },
+    "require-dev": {
+
+    },
+    "autoload": {
+      "psr-4": {
+        "zaboy\\res\\": "src/"
+      }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "ZendTest\\Expressive\\": "test/"
+      }
+    },
+    "suggest": {
+
+    },
+    "scripts": {
+
+    }
+}
