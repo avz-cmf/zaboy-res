@@ -572,73 +572,28 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
                 $this->object->count()
         ); 
     }        
-/**    
+   
 
 //************************** Iterator ************************ 
     
     public function testIteratorInterfaceStepToStep()
     {
-        $this->_initObject();         
-        //$this->object->setIdentifier('id');
-        foreach ($this->itemsData as $value) {
-             $this->object->setItem($value);
+        $this->_initObject();
+        $i =0;
+        foreach ($this->object as $key => $value) {
+            $i= $i+1;
+            $this->assertEquals( $value, $this->object->read($key) );
+            $this->assertEquals( 
+                    $this->_itemsArrayDelault[$key-1],
+                    $value
+            );
+
+            unset($this->_itemsArrayDelault[$key-1]);
         }
         $this->assertEquals(
-                4,
-                $this->object->count()
+            $i,
+            $this->object->count()
         );
-        foreach ($this->itemsData as $key => $value) {
-            $this->assertEquals( $value, $this->object->getItem($key) );
-        }
-    
-        $i = 0;
-        foreach ($this->object as $key => $value) {
-            $i = $i +1;
-            $this->assertEquals(
-                    $key,
-                    $i
-            );            
-            $this->assertEquals( $value, $this->itemsData[$i] );
-        }
-        $this->assertEquals( 4, $i );        
-        
+        $this->assertEmpty($this->_itemsArrayDelault);
     }     
-    
-    
-    public function testIteratorInterfaceEditedData()
-    {
-        $this->_initObject();         
-        //$this->object->setIdentifier('id');
-        foreach ($this->itemsData as $value) {
-             $this->object->setItem($value);
-        }
-        $this->assertEquals(
-                4,
-                $this->object->count()
-        );
-        foreach ($this->itemsData as $key => $value) {
-            $this->assertEquals(
-                    $value,
-                    $this->object->getItem($key)
-            );
-        }
-        
-        $this->object->removeItem(2);
-        $newItem = $this->itemsData[2];
-        unset($newItem['id']);
-        $this->object->setItem($newItem); 
-
-        $i = 0;
-        foreach ($this->object as $key => $value) {
-            $i = $i +1;
-            $this->assertEquals(
-                    $value['fString'],
-                    $this->itemsData[$value['anotherId']/10]['fString']
-            );
-        }        
-        $this->assertEquals( 4, $i );          
-    }         
-
-
-     */
 }

@@ -31,6 +31,10 @@ class DbTable extends DataStoresAbstract
      */
     protected $_dbTable;
     
+    /**
+     * 
+     * @param TableGateway $dbTable
+     */
     public function __construct(TableGateway $dbTable)
     {
         parent::__construct();

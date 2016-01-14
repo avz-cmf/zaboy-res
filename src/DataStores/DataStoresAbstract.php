@@ -12,6 +12,8 @@ use zaboy\res\DataStores\Read\ReadInterface;
 use zaboy\res\DataStores\Write\WriteInterface;
 use Countable;
 use zaboy\res\DataStores\DataStoresException;
+use zaboy\res\DataStores\Read\DataStoreIterator;
+use \IteratorAggregate;
 
 /**
  * Abstract class for DataStores
@@ -20,7 +22,7 @@ use zaboy\res\DataStores\DataStoresException;
  * @package    DataStores
  * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete 
  */
-abstract class DataStoresAbstract implements ReadInterface, WriteInterface, Countable
+abstract class DataStoresAbstract implements ReadInterface, WriteInterface, Countable, IteratorAggregate
 {   
     /**
      * @see http://php.net/manual/en/function.gettype.php
@@ -28,13 +30,13 @@ abstract class DataStoresAbstract implements ReadInterface, WriteInterface, Coun
     const INT_TYPE    = "integer" ;
     const FLOAT_TYPE = "double"; // (for historical reasons "double" is returned in case of a float, and not simply "float")  ;
     const STR_TYPE  = "string" ;   
+ 
     
     /**
      * 
      */
     public function __construct()
     {
-        
     }
     
 //** Interface "Zaboy_DataStores_Read_Interface" **            **                          **
@@ -194,14 +196,25 @@ abstract class DataStoresAbstract implements ReadInterface, WriteInterface, Coun
         
     }
     
-//** Interface "Coutable" **                                    **                          **
     
     /**
+     * Interface "Coutable"
+     * 
      * @see coutable
      * @return int
      */
     public function count() {
         
+    }
+    
+    /**
+     * Iterator for Interface IteratorAggregate 
+     * 
+     * @see IteratorAggregate
+     * @return Traversable 
+     */
+    public function getIterator() {
+        return new DataStoreIterator($this);
     }
     
     
