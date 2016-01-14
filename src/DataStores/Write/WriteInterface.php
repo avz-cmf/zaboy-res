@@ -36,19 +36,20 @@ interface WriteInterface
     public function create($itemData, $rewriteIfExist = false);
     
     /**
-     * By default, update existing Item with PrimaryKey = $item["id"].
+     * By default, update existing Item.
      * 
      * If item with PrimaryKey == $item["id"] is existing in store, item will updete.
-     * Filds wich don't present in $item will not change in item in store.
-     * Method will return 1<br>
-     * 
-     * If $item["id"] isn't set - method will throw exception.
-     * If item with PrimaryKey == $item["id"] is absent - method do nothing and return 0,
-     * but if $createIfAbsent = true item will be created and method return 1.<br>
-     * 
+     * Filds wich don't present in $item will not change in item in store.<br>
+     * Method will return updated item<br>
+     * <br>
+     * If $item["id"] isn't set - method will throw exception.<br>
+     * <br>
+     * If item with PrimaryKey == $item["id"] is absent - method  will throw exception,<br>
+     * but if $createIfAbsent = true item will be created and method return inserted item<br>
+     * <br>
      * 
      * @param array $itemData associated array with PrimaryKey
-     * @return int number of updeted (created) items: 0 , 1 or null if object doesn't support it
+     * @return array updated item or inserted item
      */
     public function update($itemData, $createIfAbsent = false);
     

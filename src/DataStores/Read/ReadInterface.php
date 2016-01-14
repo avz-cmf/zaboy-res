@@ -91,7 +91,7 @@ interface ReadInterface
      * 
      * @see ASC
      * @see DESC
-     * @param string|int|Array|null $where   
+     * @param Array|null $where   
      * @param array|null $filds What filds will be included in result set. All by default 
      * @param array|null $order
      * @param int|null $limit

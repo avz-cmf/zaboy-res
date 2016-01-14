@@ -94,7 +94,7 @@ class Memory extends DataStoresAbstract
      * 
      * @see ASC
      * @see DESC
-     * @param string|int|Array|null $where   
+     * @param Array|null $where   
      * @param array|null $filds What filds will be included in result set. All by default 
      * @param array|null $order
      * @param int|null $limit
@@ -223,44 +223,44 @@ class Memory extends DataStoresAbstract
         }
         return $id;
     }
-    
-    
+
     /**
-     * By default, update existing Item with PrimaryKey = $item["id"].
+     * By default, update existing Item.
      * 
      * If item with PrimaryKey == $item["id"] is existing in store, item will updete.
-     * Filds wich don't present in $item will not change in item in store.
-     * Method will return 1<br>
-     * 
-     * If $item["id"] isn't set - method will throw exception.
-     * If item with PrimaryKey == $item["id"] is absent - method do nothing and return 0,
-     * but if $createIfAbsent = true item will be created and method return 1.<br>
-     * 
+     * Filds wich don't present in $item will not change in item in store.<br>
+     * Method will return updated item<br>
+     * <br>
+     * If $item["id"] isn't set - method will throw exception.<br>
+     * <br>
+     * If item with PrimaryKey == $item["id"] is absent - method  will throw exception,<br>
+     * but if $createIfAbsent = true item will be created and method return inserted item<br>
+     * <br>
      * 
      * @param array $itemData associated array with PrimaryKey
-     * @return int number of updeted (created) items: 0 or 1
+     * @return array updated item or inserted item
      */
     public function update($itemData, $createIfAbsent = false) {
         $identifier = $this->getIdentifier();
         if (!isset($itemData[$identifier])) {
             throw new DataStoresException('Item must has primary key'); 
         }
-        $updatedItemsCount = 1;
         $id = $itemData[$identifier];
-        $this->_checkIdentifierType($id);       
-        if ( isset($this->_items[$id]) ){
-            unset($itemData[$id]);
-            foreach ($itemData as $key => $value) {
-                $this->_items[$id][$key] = $value;
-            }
-        }else{
-            if ( $createIfAbsent ) {
-                $this->_items[$id] = array_merge(array($identifier => $id), $itemData);     
-            }else{
-                $updatedItemsCount = 0;
-            }
+        $this->_checkIdentifierType($id);
+
+        switch (true) {
+             case !isset($this->_items[$id]) && !$createIfAbsent:
+                $errorMsg = 'Cann\'t update item with "id" = ' . $id; 
+                throw new DataStoresException($errorMsg);
+            case !isset($this->_items[$id]) && $createIfAbsent:
+                $this->_items[$id] = array_merge(array($identifier => $id), $itemData);        
+                break;
+            case isset($this->_items[$id]):
+                unset($itemData[$id]);
+                $this->_items[$id] = array_merge($this->_items[$id], $itemData);  
+                break;
         }
-        return $updatedItemsCount;
+        return $this->_items[$id];
     }
     
      /**
