@@ -18,6 +18,10 @@ use \IteratorAggregate;
 /**
  * Abstract class for DataStores
  * 
+ * @todo JsonSerializable https://github.com/zendframework/zend-diactoros/blob/master/doc/book/custom-responses.md#json-responses
+ * @todo Adapter paras to config for tests
+ * @todo Excel client
+ * @todo SVC Store
  * @category   DataStores
  * @package    DataStores
  * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete 

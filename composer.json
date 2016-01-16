@@ -1,5 +1,21 @@
 {
-    "name": "zaboy-res",
+  "name": "avz-cmf/zaboy-res",
+  "description": "Data store as REST resource",
+  "type": "library",
+  "license": "GPL-3.0",
+  "keywords": [
+    "php",
+    "rest",
+    "data store",
+    "resource"
+  ],
+  
+  "homepage": "https://github.com/avz-cmf/zaboy-res",
+  
+  "support": {
+    "issues": "https://github.com/avz-cmf/zaboy-res/issues",
+    "source": "https://github.com/avz-cmf/zaboy-res"
+  },
 
     "require": {
         "zendframework/zend-db": "^2.6"

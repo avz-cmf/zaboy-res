@@ -25,11 +25,17 @@ class DbTableTest extends AbstractTest {
     protected $object;
     
     /**
+     * @var array
+     */
+    protected $config;
+    
+    
+    /**
      * @var Zend\Db\Adapter\Adapter
      */
     protected $adapter;   
     
-    protected $dbTableName = 'res_test_test';
+    protected $dbTableName;
     
     protected $configTableDefault = array(
         'id' => 'INT NOT NULL AUTO_INCREMENT PRIMARY KEY',
@@ -43,7 +49,9 @@ class DbTableTest extends AbstractTest {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-
+        $this->config = include './config/autoload/test.local.php';
+        $this->dbTableName = $this->config['tableName'];
+        unset($this->config['tableName']);
     }
 
     /**
@@ -112,14 +120,7 @@ class DbTableTest extends AbstractTest {
      * This method init $this->object
      */
     protected function _initObject($data = null) {
-        $this->adapter =  new Adapter(
-            array(
-                'driver' => 'Pdo_Mysql',
-                'database' => 'zav_res',
-                'username' => 'root',
-                'password' => ''
-            )
-        );
+        $this->adapter =  new Adapter( $this->config );
         
         if (is_null($data)) {
             $data = $this->_itemsArrayDelault;
