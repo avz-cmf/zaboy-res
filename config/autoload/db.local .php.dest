@@ -1,0 +1,9 @@
+<?php
+return [ 
+    'db' => [
+        'driver' => 'Pdo_Mysql',
+        'database' => 'zav_res',
+        'username' => 'root',
+        'password' => ''
+    ] 
+];

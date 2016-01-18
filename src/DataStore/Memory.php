@@ -30,18 +30,10 @@ class Memory extends DataStoresAbstract
      * 
      * @param array $itemsSorce
      */
-    public function __construct($itemsSorce)
+    public function __construct(array $options = null)
     {
-        parent::__construct();
+        parent::__construct($options);
         $identifier = $this->getIdentifier();
-        foreach ($itemsSorce as $item) {
-            if ( isset($item[$identifier]) ) {
-                $id = $item[$identifier];   
-                $this->_checkIdentifierType($id);
-                unset($item[$identifier]);
-                $this->_items[$id] = array_merge(array($identifier => $id), $item);
-            }
-        }
     }           
             
             

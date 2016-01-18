@@ -38,8 +38,9 @@ abstract class DataStoresAbstract implements ReadInterface, WriteInterface, Coun
     
     /**
      * 
+     * @param array $options
      */
-    public function __construct()
+    public function __construct(array $options = null)
     {
     }
     

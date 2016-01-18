@@ -34,8 +34,9 @@ class DbTable extends DataStoresAbstract
     /**
      * 
      * @param TableGateway $dbTable
+     * @param array $options
      */
-    public function __construct(TableGateway $dbTable)
+    public function __construct(TableGateway $dbTable, array $options = null)
     {
         parent::__construct();
         $this->_dbTable = $dbTable;

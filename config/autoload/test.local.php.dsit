@@ -1,8 +1,0 @@
-<?php
-return [ 
-    'driver' => 'Pdo_Mysql',
-    'database' => '',
-    'tableName' => '',
-    'username' => '',
-    'password' => ''
-];

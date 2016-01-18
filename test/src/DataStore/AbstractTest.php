@@ -26,6 +26,17 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
     protected $object;
     
     /**
+     * @var array
+     */
+    protected $config;
+    
+    
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;    
+    
+    /**
      *
      * @var array 
      */
@@ -63,6 +74,8 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        $this->container = include './config/container.php';
+        $this->config = $this->container->get('config')['dataStore'];
     }
 
     /**
