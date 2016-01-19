@@ -57,11 +57,6 @@ class DbTableFactory implements FactoryInterface
      * @var array|null
      */
     protected  $config;
-    
-    /*
-     * @var Interop\Container\ContainerInterface
-     */
-    protected $container;
 
     /**
      * Create and return an instance of the DataStore.
@@ -73,8 +68,7 @@ class DbTableFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null) 
     {
-        $this->container = !isset($container) ? new ServiceManager(): $container;
-        $config = $this->container->has('config') ? $this->container->get('config') : [];
+        $config = $container->has('config') ? $container->get('config') : [];
         $this->config = isset($config['dataStore'][$requestedName]) ? $config['dataStore'][$requestedName]:[];
         if (isset($this->config['class'])) {
             $className = $this->config['class'];
@@ -82,7 +76,7 @@ class DbTableFactory implements FactoryInterface
             $className = 'zaboy\res\DataStore\DbTable';
         }
         $tableName = isset($this->config ['tableName']) ? $this->config ['tableName'] : null;
-        $db = $this->container->has('db') ? $this->container->get('db') : null;
+        $db = $container->has('db') ? $container->get('db') : null;
         if (isset($tableName) && isset($db)) {
             $tableGateway = new TableGateway($tableName, $db);
         } else {
