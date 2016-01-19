@@ -27,6 +27,7 @@ class MemoryTest extends AbstractTest {
      */
     protected function setUp() {
         parent::setUp();
+        $this->object = $this->container->get('testMemory');    
     }
 
     /**
@@ -44,7 +45,6 @@ class MemoryTest extends AbstractTest {
         if (is_null($data)) {
             $data = $this->_itemsArrayDelault;
         }
-        $this->object = $this->container->get('testMemory');         
         foreach ($data as $record) {
             $this->object->create($record);
         }

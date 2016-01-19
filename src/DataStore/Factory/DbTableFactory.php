@@ -9,8 +9,8 @@
 namespace zaboy\res\DataStore;
 
 use zaboy\res\DataStore\DbTableFactoryTrait;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\ServiceManager\FactoryInterface;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Create and return an instance of the DataStore which based on DbTable
@@ -48,16 +48,20 @@ use Zend\ServiceManager\FactoryInterface;
  */
 class DbTableFactory implements FactoryInterface
 {
+
     use DbTableFactoryTrait;
     
     /**
-     * Create service
+     * Create and return an instance of the DataStore.
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @param  Interop\Container\ContainerInterface $container
+     * @param  string $requestedName
+     * @param  array $options
+     * @return DataStores\DataStoresInterface
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) 
     { 
-        return $this->makeDbTableDataStore($serviceLocator);
+        return $this->makeDbTableDataStore($container);
     }
+
 }    

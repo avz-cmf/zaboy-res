@@ -6,10 +6,10 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\res\DataStores;
+namespace zaboy\res\DataStores\Factory;
 
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
+use Interop\Container\ContainerInterface;
 use zaboy\res\DataStores\DataStoresAbstractFactoryTrait;
 
 /**
@@ -50,29 +50,28 @@ class DataStoresAbstractFactory implements AbstractFactoryInterface
     use DataStoresAbstractFactoryTrait;
     
     /**
-     * Determine if we can create a service with name
+     * Can the factory create an instance for the service?
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
+     * @param  Interop\Container\ContainerInterface $container
+     * @param  string $requestedName
      * @return bool
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName) 
     {
-        return $this->canMakeDataStore($serviceLocator, $requestedName);
+        return $this->canMakeDataStore($container, $requestedName);
     }
 
     /**
-     * Create service with name
+     * Create and return an instance of the DataStore.
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
-     * @return mixed
+     * @param  Interop\Container\ContainerInterface $container
+     * @param  string $requestedName
+     * @param  array $options
+     * @return DataStores\DataStoresInterface
      */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) 
     {
-        return $this->makeDataStore( $serviceLocator, $requestedName);
+        return $this->makeDataStore( $container, $requestedName);
     }
     
     

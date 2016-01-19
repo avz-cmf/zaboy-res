@@ -23,7 +23,7 @@ use Zend\Db\Sql\Select;
  * @see https://github.com/zendframework/zend-db
  * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete 
  */
-class DbTable extends DataStoresAbstract
+class DbTableAbstract extends DataStoresAbstract
 {    
     /**
      *
@@ -36,11 +36,24 @@ class DbTable extends DataStoresAbstract
      * @param TableGateway $dbTable
      * @param array $options
      */
-    public function __construct(TableGateway $dbTable)
+    public function __construct(array $options = null)
     {
         parent::__construct();
         $this->_dbTable = $dbTable;
-    }        
+    }
+    
+    
+    /**
+     * 
+     * @param TableGateway $dbTable
+     */
+    public function setTableNamet(TableGateway $dbTable)
+    {
+        if (isset($this->_dbTable)) {
+            throw new DataStoresException('Table name ia already set in' . $this->_dbTable);
+        }
+        $this->_dbTable = $dbTable;
+    } 
             
             
     /**
