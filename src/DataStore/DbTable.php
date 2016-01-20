@@ -11,7 +11,6 @@ namespace zaboy\res\DataStore;
 use zaboy\res\DataStores\DataStoresAbstract;
 use zaboy\res\DataStores\DataStoresException;
 use Zend\Db\TableGateway\TableGateway;
-use Zend\Db\RowGateway\RowGateway;
 use Zend\Db\Sql\Select;
 
 /**

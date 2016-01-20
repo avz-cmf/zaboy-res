@@ -8,12 +8,9 @@
 
 namespace zaboy\res\DataStores;
 
-use zaboy\res\DataStores\Read\ReadInterface;
-use zaboy\res\DataStores\Write\WriteInterface;
-use Countable;
+use zaboy\res\DataStores\DataStoresInterface;
 use zaboy\res\DataStores\DataStoresException;
 use zaboy\res\DataStores\Read\DataStoreIterator;
-use \IteratorAggregate;
 
 /**
  * Abstract class for DataStores
@@ -26,7 +23,7 @@ use \IteratorAggregate;
  * @package    DataStores
  * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete 
  */
-abstract class DataStoresAbstract implements ReadInterface, WriteInterface, Countable, IteratorAggregate
+abstract class DataStoresAbstract implements DataStoresInterface 
 {   
     /**
      * @see http://php.net/manual/en/function.gettype.php

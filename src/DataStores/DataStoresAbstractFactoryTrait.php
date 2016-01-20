@@ -64,7 +64,7 @@ trait  DataStoresAbstractFactoryTrait
     {
         $serviceConfig = $container->get('config')['dataStore'][$requestedName];
         if (isset($serviceConfig['tableName'])) {
-            $tableName = $this->config[$requestedName]['tableName'];
+            $tableName = $this->config['tableName'];
         }else{
             throw new DataStoresException( 
                 'There is not table name for ' . $requestedName . 'in config \'dataStore\''

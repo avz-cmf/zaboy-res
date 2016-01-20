@@ -8,6 +8,8 @@
 
 namespace zaboy\res\DataStores;
 
+use \IteratorAggregate;
+use \Countable;
 use zaboy\res\DataStores\Read\ReadInterface;
 use zaboy\res\DataStores\Write\WriteInterface;
 
@@ -18,7 +20,7 @@ use zaboy\res\DataStores\Write\WriteInterface;
  * @package    DataStores
  * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete 
  */
-interface DataStoresInterface extends ReadInterface, WriteInterface, Traversable, Countable
+interface DataStoresInterface extends ReadInterface, WriteInterface, IteratorAggregate, Countable
 {    
  
 }
