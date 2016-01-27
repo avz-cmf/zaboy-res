@@ -9,10 +9,5 @@ return [
         'testMemory' => [
             'class' =>'zaboy\res\DataStore\Memory',
             ]
-    ],    
-    'services' => [
-        'factories' => [
-            'db' => 'zaboy\res\Db\Adapter\AdapterFactory'            
-        ],
-    ]
+    ]   
 ];

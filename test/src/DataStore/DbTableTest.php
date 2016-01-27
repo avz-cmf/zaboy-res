@@ -9,7 +9,6 @@
 namespace zaboy\test\res\DataStore;
 
 use  zaboy\test\res\DataStore\AbstractTest;
-use  zaboy\res\DataStore\DbTableFactory;
 use  Zend\Db\TableGateway\TableGateway;
 
 /**
@@ -42,10 +41,16 @@ class DbTableTest extends AbstractTest {
      */
     protected function setUp() {
         parent::setUp();
+        /**
         $this->dbTableName = $this->config['testDbTable']['tableName'];
         $this->adapter = $this->container->get('db');
         $dbTableFactory = new DbTableFactory();
         $this->object = $dbTableFactory->makeDbTableDataStore($this->container, $this->dbTableName);
+         * 
+         */
+        $this->dbTableName = $this->config['testDbTable']['tableName'];
+        $this->adapter = $this->container->get('db');
+        $this->object = $this->container->get('testDbTable');    
     }
 
     /**
