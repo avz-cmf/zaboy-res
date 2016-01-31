@@ -154,7 +154,7 @@ class DataStoresAbstractFactory implements AbstractFactoryInterface
      * @return mixed
      */
     protected function makeDataStore(ContainerInterface $container, $requestedName)
-    {
+    {   
         $config = $container->get('config');
         $requestedClassName = $config['dataStore'][$requestedName]['class'];
         $methodName = 'get' . $this->getTwoLastWordsFromClass($requestedClassName);

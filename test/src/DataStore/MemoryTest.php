@@ -25,6 +25,13 @@ class MemoryTest extends AbstractTest {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    public function presetUp() {
+        $this->setUp();   
+    }
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
     protected function setUp() {
         parent::setUp();
         $this->object = $this->container->get('testMemory');    

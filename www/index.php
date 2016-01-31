@@ -1,21 +1,45 @@
 <?php
+
+use Xiag\Rql\Parser\Node\Query\ScalarOperator;
+
+
 // Change to the project root, to simplify resolving paths
 chdir(dirname(__DIR__));
 
 // Setup autoloading
 require '/vendor/autoload.php';
-$container = include 'config/container.php';
-//$app = $container->get('Zend\Expressive\Application');
-//$app->run();
+//$container = include 'config/container.php';
+
+include 'test/src/DataStore/AbstractTest.php';
+include 'test/src/DataStore/MemoryTest.php';
+use zaboy\test\res\DataStore\MemoryTest;
+$test = new MemoryTest();
+
+$test->presetUp();
+$test->test_QueryEq();
 
 echo('<!DOCTYPE html><html><head></head><body>');
 
-
 echo ( '!!!!!!!!!!!!!!' . PHP_EOL . '<br>');
-//var_dump($container->get('config'));
-$dm = $container->get('testDbTable');
+
+
 
 echo('</body></html>');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
 

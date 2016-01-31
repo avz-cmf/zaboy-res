@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d91de45c492b4f17c23b2b3a0c401304",
-    "content-hash": "0ee198fbd7fdab98954ce5521c03861d",
+    "hash": "eb2d188809e31d0663ec09955fd5dbf2",
+    "content-hash": "713b85307112e1375194777022e00d7d",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -33,6 +33,49 @@
             ],
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "time": "2014-12-30 15:22:37"
+        },
+        {
+            "name": "xiag/rql-parser",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/xiag-ag/rql-parser.git",
+                "reference": "92e8245ea52b170998d6b3be538de20d4cddd2a3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/xiag-ag/rql-parser/zipball/92e8245ea52b170998d6b3be538de20d4cddd2a3",
+                "reference": "92e8245ea52b170998d6b3be538de20d4cddd2a3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "suggest": {
+                "xiag/rql-command": "Console commands to visualize your RQL code"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Xiag\\Rql\\Parser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0"
+            ],
+            "keywords": [
+                "language",
+                "parser",
+                "query",
+                "resource",
+                "rest",
+                "rql"
+            ],
+            "time": "2015-08-21 11:19:07"
         },
         {
             "name": "zendframework/zend-config",

@@ -11,6 +11,14 @@ namespace zaboy\res\DataStores;
 use zaboy\res\DataStores\DataStoresInterface;
 use zaboy\res\DataStores\DataStoresException;
 use zaboy\res\DataStores\Read\DataStoreIterator;
+use Xiag\Rql\Parser\Query;
+use Xiag\Rql\Parser\Node\SelectNode;
+use Xiag\Rql\Parser\Node\AbstractQueryNode;
+use Xiag\Rql\Parser\Node\SortNode;
+use Xiag\Rql\Parser\Node\LimitNode;
+use Xiag\Rql\Parser\Node\Query\LogicOperator;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator;
+
 
 /**
  * Abstract class for DataStores
@@ -31,7 +39,7 @@ abstract class DataStoresAbstract implements DataStoresInterface
     const INT_TYPE    = "integer" ;
     const FLOAT_TYPE = "double"; // (for historical reasons "double" is returned in case of a float, and not simply "float")  ;
     const STR_TYPE  = "string" ;   
- 
+
     
     /**
      * 
@@ -237,5 +245,158 @@ abstract class DataStoresAbstract implements DataStoresInterface
         }
     }
     
+    /**
+     * 
+     * @param \Traversable $data
+     * @param type $sort
+     * @throws DataStoresException
+     */
+    public function sortQueryResult(\Traversable $data, $sort)
+    {
+        $nextCompareLevel ='';
+        foreach ($order as $ordKey => $ordVal) {
+            if($ordVal === self::SORT_ASC){
+                $cond = '>'; $notCond = '<';
+            }elseIf($ordVal === self::SORT_DESC){
+                $cond = '<'; $notCond = '>';
+            }else{
+                throw new DataStoresException('Invalid condition: ' . $ordVal);    
+            }    
+            $prevCompareLevel = 
+                "if (\$a['$ordKey'] $cond \$b['$ordKey']) {return 1;};" . PHP_EOL 
+                . "if (\$a['$ordKey'] $notCond  \$b['$ordKey']) {return -1;};" . PHP_EOL
+            ;
+            $nextCompareLevel =$nextCompareLevel . $prevCompareLevel;                 
+        }
+        $sortFunctionBody = $nextCompareLevel . 'return 0;';
+        $sortFunction = create_function('$a,$b', $sortFunctionBody);
+        usort($data, $sortFunction);
+        return $data;
+    }        
+    
+    
+    /**
+     * Iterator for Interface IteratorAggregate 
+     * 
+     * @see IteratorAggregate
+     * @return Traversable 
+     */
+    public function query(Query $query) 
+    {
+        $limits = $query->getLimit();
+        $sort = $query->getSort();
+        
+        switch (true) {
+            case !isset($limits) && !isset($sort):
+                $limit = 'Infinity';
+                $offset = 0;
+                $result = $this->doQueryWhere($this, $query, $limit, $offset);        
+                return $result;
+            case !isset($limits) && isset($sort):
+                $limit = 'Infinity';
+                $offset = 0;
+                $result = $this->doQueryWhere($this, $query, $limit, $offset);  
+                $result = $this->sortQueryResult($result);
+                return $result;
+            case isset($limits) && !isset($sort):
+                $limit = $query->getLimit()->getLimit();
+                $offset = $query->getLimit()->getOffset();
+                $result = $this->doQueryWhere($this, $query, $limit, $offset);  
+                return $result;
+            case isset($limits) && isset($sort):
+                $limit = 'Infinity';
+                $offset = 0;
+                $data = $this->doQueryWhere($this, $query, $limit, $offset); 
+                $data = $this->sortQueryResult($data);
+                $limit = $query->getLimit()->getLimit();
+                $offset = $query->getLimit()->getOffset();
+                $result = $this->doQueryWhere($data, $query, $limit, $offset);  
+                return $result;
+        }
+    }
+    
+    public function limitWhereCheck($i, $limit, $offset, $ifWhere)
+    {
+        switch (true) {
+            case !$ifWhere:
+                return'skip!';
+            case $i < ($offset):
+                return'increment!'; 
+            case $limit <> 'Infinity' && $i <= ($limit + $offset):
+                return'enough!';
+            default:
+                return'write!';
+        }
+    }  
+    
+    public function doQueryWhere(\Traversable $data, Query $query, $limit, $offset)
+    {
+        $rootQueryNode = $query->getQuery();
+        /* @var $rootQueryNode AbstractQueryNode */
+        $conditioon = $this->getQueryWhereConditioon($rootQueryNode);
+        $whereFunction = $this->getQueryWhereFunction($conditioon);
+        $i = 0;
+            $result = [];        
+        foreach ($data as $value) {
+            $ifWhere = $whereFunction($value);
+            switch ($this->limitWhereCheck($i, $limit, $offset, $ifWhere)) {
+                case 'write!':
+                    $result[] = $value;
+                    $i = $i +1;
+                    break;
+                case 'increment!':
+                    $i = $i +1;
+                    break;
+                case 'skip!':
+                    break;
+                case 'enough!':
+                    return $result;
+            }
+        }
+        var_dump($result);            
+        return $result;
+        //$queryWhere = empty($rootQueryNode) ? true : $this->getQueryWhere($rootQueryNode);
+    }
+    
+    public function getQueryWhereConditioon(AbstractQueryNode $queryNode)
+    {
+        switch (true) {
+            case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\LogicOperator\AndNode', true):
+                /* @var $queryNode LogicOperator\AndNode */
+                $subNodes = $queryNode->getQueries();
+                $conditioon = '';
+                foreach ($subNodes as $subNode) {
+                    $conditioon = $conditioon .   
+                        '(' 
+                        . $this->getQueryWhereConditioon($subNode)
+                        . ')' . PHP_EOL . ' && ';
+                }
+                $conditioon = rtrim($conditioon, ' && ');
+                break;
+            case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\ScalarOperator\EqNode', true):
+                /* @var $queryNode ScalarOperator\EqNode */
+                $field = $queryNode->getField();
+                $value = $queryNode->getValue();  
+                $conditioon =  'isset($item["' . $field . '"]) && $item["' . $field . '"] == "' . $value . '"';
+                break;
+            default:
+                throw new DataStoresException( 
+                    'The logical condition not suppoted' . $queryNode->getNodeName()
+                ); 
+        }
+            return $conditioon;
+    }        
+    
+    public function getQueryWhereFunction($conditioon)
+    {
+        $whereFunctionBody = PHP_EOL  .
+            '$result = ' . PHP_EOL 
+            . rtrim($conditioon, PHP_EOL) . ';' . PHP_EOL 
+            . 'return $result;'
+        ;
+        var_dump($whereFunctionBody);
+        $whereFunction = create_function('$item', $whereFunctionBody);
+        return $whereFunction;
+    }
     
 }

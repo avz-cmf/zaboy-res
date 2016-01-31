@@ -33,7 +33,17 @@ interface ReadInterface
     /**
      * sorting by descending
      */
-    const DESC = 'DESC';    
+    const DESC = 'DESC'; 
+    
+    /**
+     * sorting by ascending from Xiag\Rql\Parser\Query;
+     */
+    const SORT_ASC = 1;
+    
+    /**
+     * sorting by descending from Xiag\Rql\Parser\Query;
+     */
+    const SORT_DESC = -1;
     
     /**
      * Return primary key
