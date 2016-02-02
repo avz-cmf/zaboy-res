@@ -12,6 +12,10 @@ use zaboy\res\DataStores\DataStoresAbstract;
 use zaboy\res\DataStores\DataStoresException;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
+use Xiag\Rql\Parser\Query;
+use Xiag\Rql\Parser\Node\AbstractQueryNode;
+use Xiag\Rql\Parser\Node\Query\LogicOperator;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator;
 
 /**
  * DataStores as Db Table
@@ -294,4 +298,79 @@ class DbTable extends DataStoresAbstract
             , $adapter::QUERY_MODE_EXECUTE);
         return $rowset->current()['count'];
     }    
+
+    public function query(Query $query) 
+    {
+        $limits = $query->getLimit();
+        $limit = !$limits ? 'Infinity' : $query->getLimit()->getLimit();
+        $offset =  !$limits ? 0 : $query->getLimit()->getOffset();
+        $sort = $query->getSort();
+        $sortFilds = !$sort ? [$this->getIdentifier()=>self::ASC] : $sort->getFields();
+        $select = $query->getSelect();  //What filds will return
+        $selectFilds = !$select ? [] : $select->getFields();
+        $selectSQL = $this->_dbTable->getSql()->select();
+        // ***********************   where   *********************** 
+        $where = $this->getQueryWhereConditioon($query->getQuery());
+        $selectSQL->where($where);
+        // ***********************   order   *********************** 
+        foreach ($sortFilds as $ordKey => $ordVal) {
+            if ((int) $ordVal === self::SORT_DESC) {
+                $selectSQL->order($ordKey . ' ' . self::DESC);
+            }else{
+                $selectSQL->order($ordKey . ' ' . self::ASC);
+            }
+        }
+        // *********************  limit, offset   *********************** 
+        if ($limit<>'Infinity') { 
+            $selectSQL->limit($limit);
+        }    
+        if ($offset<>0) { 
+            $selectSQL->offset($offset);
+        }            
+        // *********************  filds  *********************** 
+        if (!empty($selectFilds)) {
+            $selectSQL->columns($selectFilds);
+        }            
+        // ***********************   return   *********************** 
+        $rowset = $this->_dbTable->selectWith($selectSQL);
+        return $rowset->toArray();
+    }
+    
+    protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
+    {
+        $db = $this->_dbTable->getAdapter();
+        $qi = function($name) use ($db) { return $db->platform->quoteIdentifier($name); };
+        $qv = function($name) use ($db) { return $db->platform->quoteValue($name); };
+        
+        switch (true) {
+            case is_null($queryNode):
+                $conditioon = $qv(1) . ' = ' . $qv(1);
+                break;
+            case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\LogicOperator\AndNode', true):
+                /* @var $queryNode LogicOperator\AndNode */
+                $subNodes = $queryNode->getQueries();
+                $conditioon = '';
+                foreach ($subNodes as $subNode) {
+                    $conditioon = $conditioon .   
+                        '(' 
+                        . $this->getQueryWhereConditioon($subNode)
+                        . ')' . PHP_EOL . ' AND ';
+                }
+                $conditioon = rtrim($conditioon, ' AND ');
+                break;
+            case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\ScalarOperator\EqNode', true):
+                /* @var $queryNode ScalarOperator\EqNode */
+                $field = $queryNode->getField();
+                $value = $queryNode->getValue();  
+                $conditioon =  $qi($field) . ' = ' . $qv($value);
+                break;
+            default:
+                throw new DataStoresException( 
+                    'The logical condition not suppoted' . $queryNode->getNodeName()
+                ); 
+        }
+                var_dump($conditioon);   
+            return $conditioon;
+    }    
+    
 }    

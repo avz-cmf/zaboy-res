@@ -246,13 +246,41 @@ abstract class DataStoresAbstract implements DataStoresInterface
     }
     
     /**
+     * @see IteratorAggregate
+     * @return Traversable 
+     */
+    public function query(Query $query) 
+    {
+        $limits = $query->getLimit();
+        $limit = !$limits ? 'Infinity' : $query->getLimit()->getLimit();
+        $offset =  !$limits ? 0 : $query->getLimit()->getOffset();
+        $sort = $query->getSort();
+        $sortFilds = !$sort ? [] : $sort->getFields();
+        $select = $query->getSelect();
+        $selectFilds = !$select ? [] : $select->getFields();
+        if (isset($limits) && isset($sort)) {
+                $data = $this->doQueryWhere($this, $query, 'Infinity', 0); 
+                $sortedData = $this->sortQueryResult($data, $sortFilds);
+                $result = array_slice($sortedData, $offset, $limit=='Infinity'?null:$limit);
+        }else{
+                $data = $this->doQueryWhere($this, $query, $limit, $offset);
+                $result = $this->sortQueryResult($data, $sortFilds);
+                
+        }
+        return $this->selectFilds($result, $selectFilds);
+    }
+    
+    /**
      * 
      * @param \Traversable $data
      * @param type $sort
      * @throws DataStoresException
      */
-    public function sortQueryResult($data, $sort)
+    protected function sortQueryResult($data, $sort)
     {
+        if (empty($sort)) {
+            return $data;
+        }
         $nextCompareLevel ='';
         foreach ($sort as $ordKey => $ordVal) {
             if((int) $ordVal === self::SORT_ASC){
@@ -274,51 +302,8 @@ abstract class DataStoresAbstract implements DataStoresInterface
         return $data;
     }        
     
-    
-    /**
-     * Iterator for Interface IteratorAggregate 
-     * 
-     * @see IteratorAggregate
-     * @return Traversable 
-     */
-    public function query(Query $query) 
+    protected function selectFilds($data, $filds)
     {
-        $limits = $query->getLimit();
-        $sort = $query->getSort();
-        $select = $query->getSelect();
-        $filds = !$select?[]:$select->getFields();
-        switch (true) {
-            case !isset($limits) && !isset($sort):
-                $limit = 'Infinity';
-                $offset = 0;
-                $result = $this->doQueryWhere($this, $query, $limit, $offset);        
-                return $this->selectFilds($result, $filds);
-            case !isset($limits) && isset($sort):
-                $limit = 'Infinity';
-                $offset = 0;
-                $result = $this->doQueryWhere($this, $query, $limit, $offset);  
-                $result = $this->sortQueryResult($result, $sort->getFields());
-                return $this->selectFilds($result, $filds);;
-            case isset($limits) && !isset($sort):
-                $limit = $query->getLimit()->getLimit();
-                $offset = $query->getLimit()->getOffset();
-                $result = $this->doQueryWhere($this, $query, $limit, $offset);  
-                return $this->selectFilds($result, $filds);;
-            case isset($limits) && isset($sort):
-                $limit = 'Infinity';
-                $offset = 0;
-                $data = $this->doQueryWhere($this, $query, $limit, $offset); 
-                $data = $this->sortQueryResult($data, $sort->getFields());
-                $limit = $query->getLimit()->getLimit();
-                $offset = $query->getLimit()->getOffset();
-                $result = $this->doQueryWhere($data, $query, $limit, $offset);  
-                return $this->selectFilds($result, $filds);;
-        }
-    }
-    
-    public function selectFilds($data, $filds)
-    {
-        
         if (empty($filds)) {
             return $data; 
         }else{
@@ -329,22 +314,8 @@ abstract class DataStoresAbstract implements DataStoresInterface
             return $resultArray;        
         }    
     }
-    
-    public function limitWhereCheck($i, $limit, $offset, $ifWhere)
-    {
-        switch (true) {
-            case !$ifWhere:
-                return'skip!';
-            case $i < ($offset):
-                return'increment!'; 
-            case $limit <> 'Infinity' && $i <= ($limit + $offset):
-                return'enough!';
-            default:
-                return'write!';
-        }
-    }  
-    
-    public function doQueryWhere(\Traversable $data, Query $query, $limit, $offset)
+
+    protected function doQueryWhere($data, Query $query, $limit, $offset)
     {
         $rootQueryNode = $query->getQuery();
         /* @var $rootQueryNode AbstractQueryNode */
@@ -353,31 +324,31 @@ abstract class DataStoresAbstract implements DataStoresInterface
         $i = 0;
             $result = [];        
         foreach ($data as $value) {
-            $ifWhere = $whereFunction($value);
-            switch ($this->limitWhereCheck($i, $limit, $offset, $ifWhere)) {
-                case 'write!':
+            switch (true) {
+                case !($whereFunction($value)): 
+                    // skip!
+                    break;           
+                case $i < $offset:
+                    // increment!
+                    $i = $i +1;
+                    break;      
+                case $limit <> 'Infinity' && $i >= ($limit + $offset): 
+                    //enough!
+                    return $result;             
+                default:
+                    // write!
                     $result[] = $value;
                     $i = $i +1;
-                    break;
-                case 'increment!':
-                    $i = $i +1;
-                    break;
-                case 'skip!':
-                    break;
-                case 'enough!':
-                    return $result;
             }
         }
-        var_dump($result);            
         return $result;
-        //$queryWhere = empty($rootQueryNode) ? true : $this->getQueryWhere($rootQueryNode);
     }
     
-    public function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
+    protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
     {
         switch (true) {
             case is_null($queryNode):
-                $conditioon = rtrim(true);
+                $conditioon = true;
                 break;
             case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\LogicOperator\AndNode', true):
                 /* @var $queryNode LogicOperator\AndNode */
@@ -405,16 +376,14 @@ abstract class DataStoresAbstract implements DataStoresInterface
             return $conditioon;
     }        
     
-    public function getQueryWhereFunction($conditioon)
+    protected function getQueryWhereFunction($conditioon)
     {
         $whereFunctionBody = PHP_EOL  .
             '$result = ' . PHP_EOL 
             . rtrim($conditioon, PHP_EOL) . ';' . PHP_EOL 
             . 'return $result;'
         ;
-        var_dump($whereFunctionBody);
         $whereFunction = create_function('$item', $whereFunctionBody);
         return $whereFunction;
     }
-    
 }
