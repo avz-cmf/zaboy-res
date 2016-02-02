@@ -130,7 +130,11 @@ class DbTable extends DataStoresAbstract
         // ***********************   order   *********************** 
         if (!empty($order)) {
             foreach ($order as $ordKey => $ordVal) {
-                $select->order($ordKey . ' ' . $ordVal);
+                if ((int) $ordVal === self::SORT_DESC) {
+                    $select->order($ordKey . ' ' . self::DESC);
+                }else{
+                    $select->order($ordKey . ' ' . self::ASC);
+                }
             }
         }else{
             $select->order($this->getIdentifier() . ' ' . self::ASC);

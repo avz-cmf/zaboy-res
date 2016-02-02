@@ -141,9 +141,9 @@ class Memory extends DataStoresAbstract
         if (!empty($order)) {
             $nextCompareLevel ='';
             foreach ($order as $ordKey => $ordVal) {
-                if($ordVal === self::ASC){
+                if((int) $ordVal === self::SORT_ASC){
                     $cond = '>'; $notCond = '<';
-                }elseIf($ordVal === self::DESC){
+                }elseIf((int) $ordVal === self::SORT_DESC){
                     $cond = '<'; $notCond = '>';
                 }else{
                     throw new DataStoresException('Invalid condition: ' . $ordVal);    

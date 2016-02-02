@@ -251,17 +251,17 @@ abstract class DataStoresAbstract implements DataStoresInterface
      * @param type $sort
      * @throws DataStoresException
      */
-    public function sortQueryResult(\Traversable $data, $sort)
+    public function sortQueryResult($data, $sort)
     {
         $nextCompareLevel ='';
-        foreach ($order as $ordKey => $ordVal) {
-            if($ordVal === self::SORT_ASC){
+        foreach ($sort as $ordKey => $ordVal) {
+            if((int) $ordVal === self::SORT_ASC){
                 $cond = '>'; $notCond = '<';
-            }elseIf($ordVal === self::SORT_DESC){
+            }elseIf((int) $ordVal === self::SORT_DESC){
                 $cond = '<'; $notCond = '>';
             }else{
                 throw new DataStoresException('Invalid condition: ' . $ordVal);    
-            }    
+            }
             $prevCompareLevel = 
                 "if (\$a['$ordKey'] $cond \$b['$ordKey']) {return 1;};" . PHP_EOL 
                 . "if (\$a['$ordKey'] $notCond  \$b['$ordKey']) {return -1;};" . PHP_EOL
@@ -296,7 +296,7 @@ abstract class DataStoresAbstract implements DataStoresInterface
                 $limit = 'Infinity';
                 $offset = 0;
                 $result = $this->doQueryWhere($this, $query, $limit, $offset);  
-                $result = $this->sortQueryResult($result);
+                $result = $this->sortQueryResult($result, $sort->getFields());
                 return $result;
             case isset($limits) && !isset($sort):
                 $limit = $query->getLimit()->getLimit();
@@ -307,7 +307,7 @@ abstract class DataStoresAbstract implements DataStoresInterface
                 $limit = 'Infinity';
                 $offset = 0;
                 $data = $this->doQueryWhere($this, $query, $limit, $offset); 
-                $data = $this->sortQueryResult($data);
+                $data = $this->sortQueryResult($data, $sort->getFields());
                 $limit = $query->getLimit()->getLimit();
                 $offset = $query->getLimit()->getOffset();
                 $result = $this->doQueryWhere($data, $query, $limit, $offset);  
@@ -358,9 +358,12 @@ abstract class DataStoresAbstract implements DataStoresInterface
         //$queryWhere = empty($rootQueryNode) ? true : $this->getQueryWhere($rootQueryNode);
     }
     
-    public function getQueryWhereConditioon(AbstractQueryNode $queryNode)
+    public function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
     {
         switch (true) {
+            case is_null($queryNode):
+                $conditioon = rtrim(true);
+                break;
             case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\LogicOperator\AndNode', true):
                 /* @var $queryNode LogicOperator\AndNode */
                 $subNodes = $queryNode->getQueries();

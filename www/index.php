@@ -16,7 +16,7 @@ use zaboy\test\res\DataStore\MemoryTest;
 $test = new MemoryTest();
 
 $test->presetUp();
-$test->test_QueryEq();
+$test->testQuery_all();
 
 echo('<!DOCTYPE html><html><head></head><body>');
 
