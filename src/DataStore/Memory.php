@@ -171,14 +171,9 @@ class Memory extends DataStoresAbstract
             }   
         }
 
-        // *********************  $filds   ***********************    
-        if ( !empty($filds) ) {
-            $resultArrayTemp = $resultArray;
-            $resultArray= array();
-            foreach ($resultArrayTemp as $item) {
-                $resultArray[] = array_intersect_key($item, array_flip($filds));
-            }           
-        }
+        // *********************  $filds   ***********************
+        $resultArray = $this->selectFilds($resultArray, $filds);
+        
         // ***********************   return   *********************** 
         return $resultArray;
     } 

@@ -285,24 +285,25 @@ abstract class DataStoresAbstract implements DataStoresInterface
     {
         $limits = $query->getLimit();
         $sort = $query->getSort();
-        
+        $select = $query->getSelect();
+        $filds = !$select?[]:$select->getFields();
         switch (true) {
             case !isset($limits) && !isset($sort):
                 $limit = 'Infinity';
                 $offset = 0;
                 $result = $this->doQueryWhere($this, $query, $limit, $offset);        
-                return $result;
+                return $this->selectFilds($result, $filds);
             case !isset($limits) && isset($sort):
                 $limit = 'Infinity';
                 $offset = 0;
                 $result = $this->doQueryWhere($this, $query, $limit, $offset);  
                 $result = $this->sortQueryResult($result, $sort->getFields());
-                return $result;
+                return $this->selectFilds($result, $filds);;
             case isset($limits) && !isset($sort):
                 $limit = $query->getLimit()->getLimit();
                 $offset = $query->getLimit()->getOffset();
                 $result = $this->doQueryWhere($this, $query, $limit, $offset);  
-                return $result;
+                return $this->selectFilds($result, $filds);;
             case isset($limits) && isset($sort):
                 $limit = 'Infinity';
                 $offset = 0;
@@ -311,8 +312,22 @@ abstract class DataStoresAbstract implements DataStoresInterface
                 $limit = $query->getLimit()->getLimit();
                 $offset = $query->getLimit()->getOffset();
                 $result = $this->doQueryWhere($data, $query, $limit, $offset);  
-                return $result;
+                return $this->selectFilds($result, $filds);;
         }
+    }
+    
+    public function selectFilds($data, $filds)
+    {
+        
+        if (empty($filds)) {
+            return $data; 
+        }else{
+            $resultArray = array();
+            foreach($data as $item) {
+                $resultArray[] = array_intersect_key($item, array_flip($filds));
+            }
+            return $resultArray;        
+        }    
     }
     
     public function limitWhereCheck($i, $limit, $offset, $ifWhere)
