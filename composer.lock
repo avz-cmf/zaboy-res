@@ -246,16 +246,16 @@
         },
         {
             "name": "zendframework/zend-servicemanager",
-            "version": "2.7.4",
+            "version": "2.7.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-servicemanager.git",
-                "reference": "846f8a4f9c2e438e45d2de5cec11509cb7e08d79"
+                "reference": "fb5b54db5ead533b38e311f14e9c01a79218bf2b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-servicemanager/zipball/846f8a4f9c2e438e45d2de5cec11509cb7e08d79",
-                "reference": "846f8a4f9c2e438e45d2de5cec11509cb7e08d79",
+                "url": "https://api.github.com/repos/zendframework/zend-servicemanager/zipball/fb5b54db5ead533b38e311f14e9c01a79218bf2b",
+                "reference": "fb5b54db5ead533b38e311f14e9c01a79218bf2b",
                 "shasum": ""
             },
             "require": {
@@ -294,7 +294,7 @@
                 "servicemanager",
                 "zf2"
             ],
-            "time": "2016-01-19 21:01:21"
+            "time": "2016-02-02 14:11:46"
         },
         {
             "name": "zendframework/zend-stdlib",
@@ -761,16 +761,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.21",
+            "version": "4.8.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "ea76b17bced0500a28098626b84eda12dbcf119c"
+                "reference": "dfb11aa5236376b4fc63853cf746af39fe780e72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/ea76b17bced0500a28098626b84eda12dbcf119c",
-                "reference": "ea76b17bced0500a28098626b84eda12dbcf119c",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/dfb11aa5236376b4fc63853cf746af39fe780e72",
+                "reference": "dfb11aa5236376b4fc63853cf746af39fe780e72",
                 "shasum": ""
             },
             "require": {
@@ -829,7 +829,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-12-12 07:45:58"
+            "time": "2016-02-02 09:01:21"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

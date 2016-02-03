@@ -369,8 +369,7 @@ class DbTable extends DataStoresAbstract
                     'The logical condition not suppoted' . $queryNode->getNodeName()
                 ); 
         }
-                var_dump($conditioon);   
-            return $conditioon;
+        return $conditioon;
     }    
     
 }    

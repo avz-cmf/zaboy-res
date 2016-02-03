@@ -1,48 +1,30 @@
 <?php
 
-use Xiag\Rql\Parser\Node\Query\ScalarOperator;
+use Zend\Stratigility\MiddlewarePipe;
+use Zend\Diactoros\Server;
 
-
+use zaboy\middleware\Middlewares\Factory\RestActionPipeFactory;
 // Change to the project root, to simplify resolving paths
 chdir(dirname(__DIR__));
-
 // Setup autoloading
 require '/vendor/autoload.php';
-//$container = include 'config/container.php';
+$container = include 'config/container.php';
 
+/** Test
 include 'test/src/DataStore/AbstractTest.php';
 include 'test/src/DataStore/MemoryTest.php';
 use zaboy\test\res\DataStore\MemoryTest;
 $test = new MemoryTest();
-
 $test->presetUp();
-$test->testQuery_fildsCombo();
+$test->testQuery_limitOffsetCombo();
+
 
 echo('<!DOCTYPE html><html><head></head><body>');
-
 echo ( '!!!!!!!!!!!!!!' . PHP_EOL . '<br>');
-
-
-
 echo('</body></html>');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*/
 
 /**
-
 use zaboy\res\NameSpase;
 use Zend\Db;
 
@@ -58,18 +40,31 @@ $adapter = new Db\Adapter\Adapter(
 $qi = function($name) use ($adapter) { return $adapter->platform->quoteIdentifier($name); };
 $fp = function($name) use ($adapter) { return $adapter->driver->formatParameterName($name); };
 
-
-/* @var $statement Zend\Db\Adapter\DriverStatementInterface */
-
-/**
 $statement = $adapter->query('SELECT * FROM '
     . $qi('res_test')
     . ' WHERE id = ' . $fp('val_id'));
 
 
 $results = $statement->execute(array('val_id' => 3));
-
 $row = $results->current();
 $name = $row['notes'];
  */
 
+$app    = new MiddlewarePipe();
+
+
+// Landing page
+$app->pipe('/', function ($req, $res, $next) {
+    if (! in_array($req->getUri()->getPath(), ['/', ''], true)) {
+        return $next($req, $res);
+    }
+    return $res->end('Hello world!');
+});
+$restPipe = RestActionPipeFactory();
+// Another page
+$app->pipe('/foo', function ($req, $res, $next) {
+    return $res->end('FOO!');
+});
+
+$server = Server::createServer($app, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+$server->listen();

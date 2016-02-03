@@ -794,9 +794,6 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
         $selectNode = new Node\SelectNode(['fFloat']);
         $query->setSelect($selectNode);  
         $queryArray = $this->object->query($query);
-        var_dump(']]]]]]]]]]]]]]]]'                );
-        var_dump($queryArray);
-        var_dump($queryArray);
         $this->assertEquals(
                 array('fFloat' => $this->_itemsArrayDelault[2-1]['fFloat']) ,
                 $queryArray[1-1]
@@ -806,5 +803,92 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
                 count($queryArray)
         );
     }  
+
+    public function testQuery_limitCombo()
+    {
+        $this->_initObject();
+        $query = new Query();
+        $eqNode1 = new ScalarOperator\EqNode(
+            'fString', 'val2'
+        );
+        $eqNode2 = new ScalarOperator\EqNode(
+            'fFloat', 300.003
+        ); 
+        $endNode = new LogicOperator\AndNode([$eqNode1, $eqNode2]);
+        $query->setQuery($endNode);        
+        $sortNode = new Node\SortNode(['id' => 1]);
+        $query->setSort($sortNode);  
+        $selectNode = new Node\SelectNode(['fFloat']);
+        $query->setSelect($selectNode);  
+        $limitNode = new Node\LimitNode(1);
+        $query->setLimit($limitNode);
+        $queryArray = $this->object->query($query);
+        $this->assertEquals(
+                array('fFloat' => $this->_itemsArrayDelault[2-1]['fFloat']) ,
+                $queryArray[1-1]
+        );     
+        $this->assertEquals(
+                1,
+                count($queryArray)
+        );
+    } 
     
+
+    public function testQuery_offsetCombo()
+    {
+        $this->_initObject();
+        $query = new Query();
+        $eqNode1 = new ScalarOperator\EqNode(
+            'fString', 'val2'
+        );
+        $eqNode2 = new ScalarOperator\EqNode(
+            'fFloat', 300.003
+        ); 
+        $endNode = new LogicOperator\AndNode([$eqNode1, $eqNode2]);
+        $query->setQuery($endNode);        
+        $sortNode = new Node\SortNode(['id' => 1]);
+        $query->setSort($sortNode);  
+        $selectNode = new Node\SelectNode(['fFloat']);
+        $query->setSelect($selectNode);  
+        $limitNode = new Node\LimitNode('Infinity', 1);
+        $query->setLimit($limitNode);
+        $queryArray = $this->object->query($query);
+        $this->assertEquals(
+                array('fFloat' => $this->_itemsArrayDelault[2-1]['fFloat']) ,
+                $queryArray[1-1]
+        );     
+        $this->assertEquals(
+                1,
+                count($queryArray)
+        );
+    }     
+    
+    public function testQuery_limitOffsetCombo()
+    {
+        $this->_initObject();
+        $query = new Query();
+        $eqNode1 = new ScalarOperator\EqNode(
+            'fString', 'val2'
+        );
+        $query->setQuery($eqNode1);            
+        $sortNode = new Node\SortNode(['id' => '1']);
+        $query->setSort($sortNode);  
+        $selectNode = new Node\SelectNode(['fFloat']);
+        $query->setSelect($selectNode);  
+        $limitNode = new Node\LimitNode(2, 1);
+        $query->setLimit($limitNode);
+        $queryArray = $this->object->query($query);
+        $this->assertEquals(
+                array('fFloat' => $this->_itemsArrayDelault[3-1]['fFloat']) ,
+                $queryArray[1-1]
+        );  
+        $this->assertEquals(
+                array('fFloat' => $this->_itemsArrayDelault[4-1]['fFloat']) ,
+                $queryArray[2-1]
+        ); 
+        $this->assertEquals(
+                2,
+                count($queryArray)
+        );
+    }         
 }
