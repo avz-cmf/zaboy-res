@@ -12,11 +12,11 @@ $container = include 'config/container.php';
 
 
 //include 'test/src/DataStore/AbstractTest.php';
-include 'test/src/Middlewares/Factory/StoreMiddlewareAbstractFactoryTest.php';
-use zaboy\test\middleware\Middlewares\Factory\StoreMiddlewareAbstractFactoryTest;
-$test = new StoreMiddlewareAbstractFactoryTest();
+include 'test/src/Middlewares/Factory/MiddlewareStoreAbstractFactoryTest.php';
+use zaboy\test\middleware\Middlewares\Factory\MiddlewareStoreAbstractFactoryTest;
+$test = new MiddlewareStoreAbstractFactoryTest();
 //$test->setUp();
-$test->testStoreMiddlewareMemory__invoke();
+$test->testMiddlewareMemoryStore__invoke();
 
 
 echo('<!DOCTYPE html><html><head></head><body>');

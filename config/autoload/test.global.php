@@ -12,7 +12,7 @@ return [
     ],
     'middleware' => [
         'MiddlewareMemoryTest' => [
-          'class' =>'zaboy\res\Middleware\StoreMiddlewareMemory',
+          'class' =>'zaboy\res\Middleware\MiddlewareMemoryStore',
           'dataStore' => 'testMemory'
         ]
     ],   
@@ -21,9 +21,9 @@ return [
             'db' => 'zaboy\res\Db\Adapter\AdapterFactory'       
         ],
         'abstract_factories' => [
-            'zaboy\res\DataStores\AbstractFactory\DbTableStoresAbstractFactory',
-            'zaboy\res\DataStores\AbstractFactory\MemoryStoresAbstractFactory' ,
-            'zaboy\res\Middlewares\Factory\StoreMiddlewareAbstractFactory'
+            'zaboy\res\DataStores\Factory\DbTableStoresAbstractFactory',
+            'zaboy\res\DataStores\Factory\MemoryStoresAbstractFactory' ,
+            'zaboy\res\Middlewares\Factory\MiddlewareStoreAbstractFactory'
         ]    
     ]
 ];

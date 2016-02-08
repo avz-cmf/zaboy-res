@@ -22,7 +22,7 @@ use zaboy\res\DataStore\Memory;
  * @category   DataStores
  * @package    DataStores
  */
-class StoreMiddlewareMemory extends StoreMiddlewareAbstract
+class MiddlewareMemoryStore extends StoreMiddlewareAbstract
 {
     /**
      *

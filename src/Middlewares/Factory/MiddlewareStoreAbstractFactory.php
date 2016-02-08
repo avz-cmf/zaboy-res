@@ -32,7 +32,7 @@ use zaboy\res\Middlewares\StoreMiddlewareAbstract;
  * @category   DataStores
  * @package    DataStores
  */
-class StoreMiddlewareAbstractFactory  implements AbstractFactoryInterface
+class MiddlewareStoreAbstractFactory  implements AbstractFactoryInterface
 {
     /**
      * Can the factory create an instance for the service?
