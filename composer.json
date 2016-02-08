@@ -18,6 +18,8 @@
   },
 
     "require": {
+        "zendframework/zend-stratigility": "^1.1",
+        "zendframework/zend-diactoros": "^1.1",
         "xiag/rql-parser": "*",
         "zendframework/zend-db": "^2.6",
         "zendframework/zend-config": "^2.5",

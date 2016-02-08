@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+	<meta name="robots" content="noindex" />
+
+	<title>File src/DataStores/DataStoresInterface.php | __zaboy-res</title>
+
+	<script type="text/javascript" src="resources/combined.js?3715972085"></script>
+	<script type="text/javascript" src="elementlist.js?1990131042"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Namespaces</h3>
+			<ul>
+				<li><a href="namespace-PHP.html">PHP</a>
+						</li>
+				<li class="active"><a href="namespace-zaboy.html">zaboy<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.middleware.html">middleware<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.middleware.Middlewares.html">Middlewares<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.middleware.Middlewares.Factory.html">Factory</a>
+						</li>
+							</ul></li></ul></li>
+				<li class="active"><a href="namespace-zaboy.res.html">res<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.res.DataStore.html">DataStore</a>
+						</li>
+				<li class="active"><a href="namespace-zaboy.res.DataStores.html">DataStores<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.res.DataStores.AbstractFactory.html">AbstractFactory</a>
+						</li>
+				<li><a href="namespace-zaboy.res.DataStores.Read.html">Read</a>
+						</li>
+				<li><a href="namespace-zaboy.res.DataStores.Tree.html">Tree</a>
+						</li>
+				<li><a href="namespace-zaboy.res.DataStores.Write.html">Write</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-zaboy.res.Db.html">Db<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.res.Db.Adapter.html">Adapter</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-zaboy.res.Middlewares.html">Middlewares</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-zaboy.test.html">test<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.test.res.html">res<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.test.res.DataStore.html">DataStore</a>
+						</li>
+							</ul></li></ul></li></ul></li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-zaboy.res.DataStores.DataStoresAbstract.html">DataStoresAbstract</a></li>
+			</ul>
+
+			<h3>Interfaces</h3>
+			<ul>
+				<li class="active"><a href="class-zaboy.res.DataStores.DataStoresInterface.html">DataStoresInterface</a></li>
+			</ul>
+
+
+			<h3>Exceptions</h3>
+			<ul>
+				<li><a href="class-zaboy.res.DataStores.DataStoresException.html">DataStoresException</a></li>
+			</ul>
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-zaboy.res.DataStores.html" title="Summary of zaboy\res\DataStores"><span>Namespace</span></a>
+			</li>
+			<li>
+				<a href="class-zaboy.res.DataStores.DataStoresInterface.html" title="Summary of zaboy\res\DataStores\DataStoresInterface"><span>Class</span></a>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<pre><code><span id="1" class="l"><a class="l" href="#1"> 1: </a><span class="xlang">&lt;?php</span>
+</span><span id="2" class="l"><a class="l" href="#2"> 2: </a><span class="php-comment">/**
+</span></span><span id="3" class="l"><a class="l" href="#3"> 3: </a><span class="php-comment"> * Zaboy lib (http://zaboy.org/lib/)
+</span></span><span id="4" class="l"><a class="l" href="#4"> 4: </a><span class="php-comment"> * 
+</span></span><span id="5" class="l"><a class="l" href="#5"> 5: </a><span class="php-comment"> * @copyright  Zaboychenko Andrey
+</span></span><span id="6" class="l"><a class="l" href="#6"> 6: </a><span class="php-comment"> * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+</span></span><span id="7" class="l"><a class="l" href="#7"> 7: </a><span class="php-comment"> */</span>
+</span><span id="8" class="l"><a class="l" href="#8"> 8: </a>
+</span><span id="9" class="l"><a class="l" href="#9"> 9: </a><span class="php-keyword1">namespace</span> zaboy\res\DataStores;
+</span><span id="10" class="l"><a class="l" href="#10">10: </a>
+</span><span id="11" class="l"><a class="l" href="#11">11: </a><span class="php-keyword1">use</span> \IteratorAggregate;
+</span><span id="12" class="l"><a class="l" href="#12">12: </a><span class="php-keyword1">use</span> \Countable;
+</span><span id="13" class="l"><a class="l" href="#13">13: </a><span class="php-keyword1">use</span> zaboy\res\DataStores\Read\ReadInterface;
+</span><span id="14" class="l"><a class="l" href="#14">14: </a><span class="php-keyword1">use</span> zaboy\res\DataStores\Write\WriteInterface;
+</span><span id="15" class="l"><a class="l" href="#15">15: </a>
+</span><span id="16" class="l"><a class="l" href="#16">16: </a><span class="php-comment">/**
+</span></span><span id="17" class="l"><a class="l" href="#17">17: </a><span class="php-comment"> * ReadWrite Interface for DataStores
+</span></span><span id="18" class="l"><a class="l" href="#18">18: </a><span class="php-comment"> * 
+</span></span><span id="19" class="l"><a class="l" href="#19">19: </a><span class="php-comment"> * @category   DataStores
+</span></span><span id="20" class="l"><a class="l" href="#20">20: </a><span class="php-comment"> * @package    DataStores
+</span></span><span id="21" class="l"><a class="l" href="#21">21: </a><span class="php-comment"> * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete 
+</span></span><span id="22" class="l"><a class="l" href="#22">22: </a><span class="php-comment"> */</span>
+</span><span id="23" class="l"><a class="l" href="#23">23: </a><span class="php-keyword1">interface</span> <a id="DataStoresInterface" href="#DataStoresInterface">DataStoresInterface</a> <span class="php-keyword1">extends</span> ReadInterface, WriteInterface, IteratorAggregate, Countable
+</span><span id="24" class="l"><a class="l" href="#24">24: </a>{    
+</span><span id="25" class="l"><a class="l" href="#25">25: </a> 
+</span><span id="26" class="l"><a class="l" href="#26">26: </a></span>}</code></pre>
+
+	<div id="footer">
+		__zaboy-res API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>

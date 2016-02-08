@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+
+	<title>Class zaboy\res\DataStores\AbstractFactory\DataStoresAbstractFactoryAbstract | __zaboy-res</title>
+
+	<script type="text/javascript" src="resources/combined.js?3715972085"></script>
+	<script type="text/javascript" src="elementlist.js?1990131042"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Namespaces</h3>
+			<ul>
+				<li><a href="namespace-PHP.html">PHP</a>
+						</li>
+				<li class="active"><a href="namespace-zaboy.html">zaboy<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.middleware.html">middleware<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.middleware.Middlewares.html">Middlewares<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.middleware.Middlewares.Factory.html">Factory</a>
+						</li>
+							</ul></li></ul></li>
+				<li class="active"><a href="namespace-zaboy.res.html">res<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.res.DataStore.html">DataStore</a>
+						</li>
+				<li class="active"><a href="namespace-zaboy.res.DataStores.html">DataStores<span></span></a>
+						<ul>
+				<li class="active"><a href="namespace-zaboy.res.DataStores.AbstractFactory.html">AbstractFactory</a>
+						</li>
+				<li><a href="namespace-zaboy.res.DataStores.Read.html">Read</a>
+						</li>
+				<li><a href="namespace-zaboy.res.DataStores.Tree.html">Tree</a>
+						</li>
+				<li><a href="namespace-zaboy.res.DataStores.Write.html">Write</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-zaboy.res.Db.html">Db<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.res.Db.Adapter.html">Adapter</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-zaboy.res.Middlewares.html">Middlewares</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-zaboy.test.html">test<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.test.res.html">res<span></span></a>
+						<ul>
+				<li><a href="namespace-zaboy.test.res.DataStore.html">DataStore</a>
+						</li>
+							</ul></li></ul></li></ul></li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li class="active"><a href="class-zaboy.res.DataStores.AbstractFactory.DataStoresAbstractFactoryAbstract.html">DataStoresAbstractFactoryAbstract</a></li>
+				<li><a href="class-zaboy.res.DataStores.AbstractFactory.DbTableStoresAbstractFactory.html">DbTableStoresAbstractFactory</a></li>
+				<li><a href="class-zaboy.res.DataStores.AbstractFactory.MemoryStoresAbstractFactory.html">MemoryStoresAbstractFactory</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-zaboy.res.DataStores.AbstractFactory.html" title="Summary of zaboy\res\DataStores\AbstractFactory"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class DataStoresAbstractFactoryAbstract</h1>
+
+
+	<div class="description">
+	
+<p>Create and return an instance of the DataStore which based on DbTable</p>
+
+<p>This Factory depends on Container (which should return an 'config' as
+array)</p>
+
+<p>The configuration MUST contain:</p>
+
+<pre>
+<span class="php-quote">'DataStore'</span> =&gt; [
+    <span
+class="php-quote">'TheStore'</span> =&gt; [
+        <span
+class="php-quote">'class'</span> =&gt; <span
+class="php-quote">'zaboy\res\DataStore\ClassName'</span>,
+    ]
+]
+</pre>
+
+	</div>
+
+	<dl class="tree">
+		<dd style="padding-left:0px">
+<b><span>zaboy\res\DataStores\AbstractFactory\DataStoresAbstractFactoryAbstract</span></b>			
+			 implements 
+<span>Zend\ServiceManager\AbstractFactoryInterface</span>
+			
+			
+		</dd>
+	</dl>
+
+
+	<div>
+		<h4>Direct known subclasses</h4>
+			<a href="class-zaboy.res.DataStores.AbstractFactory.DbTableStoresAbstractFactory.html">zaboy\res\DataStores\AbstractFactory\DbTableStoresAbstractFactory</a>, 
+			<a href="class-zaboy.res.DataStores.AbstractFactory.MemoryStoresAbstractFactory.html">zaboy\res\DataStores\AbstractFactory\MemoryStoresAbstractFactory</a>
+	</div>
+
+
+
+
+
+
+	<div class="info">
+		<b>Abstract</b><br />
+		
+		<b>Namespace:</b> <a href="namespace-zaboy.html">zaboy</a>\<a href="namespace-zaboy.res.html">res</a>\<a href="namespace-zaboy.res.DataStores.html">DataStores</a>\<a href="namespace-zaboy.res.DataStores.AbstractFactory.html">AbstractFactory</a><br />
+		<b>Package:</b> DataStores<br />
+
+				<b>Category:</b>
+				DataStores<br />
+				<b>See:</b>
+				<a
+href="https://github.com/zendframework/zend-db">https://github.com/zendframework/zend-db</a><br />
+				<b>Uses:</b>
+				zend-db<br />
+		<b>Located at</b> <a href="source-class-zaboy.res.DataStores.AbstractFactory.DataStoresAbstractFactoryAbstract.html#20-112" title="Go to source code">src/DataStores/AbstractFactory/DataStoresAbstractFactoryAbstract.php</a><br />
+	</div>
+
+
+
+	<table class="summary" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="canCreate" id="_canCreate">
+
+		<td class="attributes"><code>
+			abstract public 
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_canCreate">#</a>
+		<code><a href="source-class-zaboy.res.DataStores.AbstractFactory.DataStoresAbstractFactoryAbstract.html#41-54" title="Go to source code">canCreate</a>( <span>Interop\Container\ContainerInterface <var>$container</var></span>, <span>string <var>$requestedName</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Can the factory create an instance for the service?</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Can the factory create an instance for the service?</p>
+
+<p>For Service manager V3 Edit 'use' section if need: Change: 'use
+Zend\ServiceManager\AbstractFactoryInterface;' for V2 to 'use
+Zend\ServiceManager\Factory\AbstractFactoryInterface;' for V3</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$container</var></dt>
+					<dd><code>Interop\Container\ContainerInterface</code><br>$container</dd>
+					<dt><var>$requestedName</var></dt>
+					<dd><code>string</code><br>$requestedName</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="__invoke" id="___invoke">
+
+		<td class="attributes"><code>
+			 public 
+			DataStores\DataStoresInterface
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___invoke">#</a>
+		<code><a href="source-class-zaboy.res.DataStores.AbstractFactory.DataStoresAbstractFactoryAbstract.html#56-73" title="Go to source code">__invoke</a>( <span>Interop\Container\ContainerInterface <var>$container</var></span>, <span>string <var>$requestedName</var></span>, <span>array <var>$options</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			
+<p>Create and return an instance of the DataStore.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Create and return an instance of the DataStore.</p>
+
+<p>'use Zend\ServiceManager\AbstractFactoryInterface;' for V2 to 'use
+Zend\ServiceManager\Factory\AbstractFactoryInterface;' for V3</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$container</var></dt>
+					<dd><code>Interop\Container\ContainerInterface</code><br>$container</dd>
+					<dt><var>$requestedName</var></dt>
+					<dd><code>string</code><br>$requestedName</dd>
+					<dt><var>$options</var></dt>
+					<dd><code>array</code><br>$options</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>DataStores\DataStoresInterface</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="canCreateServiceWithName" id="_canCreateServiceWithName">
+
+		<td class="attributes"><code>
+			 public 
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_canCreateServiceWithName">#</a>
+		<code><a href="source-class-zaboy.res.DataStores.AbstractFactory.DataStoresAbstractFactoryAbstract.html#75-92" title="Go to source code">canCreateServiceWithName</a>( <span>Zend\ServiceManager\ServiceLocatorInterface <var>$serviceLocator</var></span>, <span>mixed <var>$name</var></span>, <span>mixed <var>$requestedName</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Determine if we can create a service with name</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Determine if we can create a service with name</p>
+
+<p>For Service manager V2 Edit 'use' section if need: Change: 'use
+Zend\ServiceManager\Factory\AbstractFactoryInterface;' for V3 to 'use
+Zend\ServiceManager\AbstractFactoryInterface;' for V2</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$serviceLocator</var></dt>
+					<dd><code>Zend\ServiceManager\ServiceLocatorInterface</code><br>$serviceLocator</dd>
+					<dt><var>$name</var></dt>
+					<dd><code>mixed</code><br>$name</dd>
+					<dt><var>$requestedName</var></dt>
+					<dd><code>mixed</code><br>$requestedName</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="createServiceWithName" id="_createServiceWithName">
+
+		<td class="attributes"><code>
+			 public 
+			mixed
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_createServiceWithName">#</a>
+		<code><a href="source-class-zaboy.res.DataStores.AbstractFactory.DataStoresAbstractFactoryAbstract.html#94-111" title="Go to source code">createServiceWithName</a>( <span>Zend\ServiceManager\ServiceLocatorInterface <var>$serviceLocator</var></span>, <span>mixed <var>$name</var></span>, <span>mixed <var>$requestedName</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Create service with name</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Create service with name</p>
+
+<p>For Service manager V2 Edit 'use' section if need: Change: 'use
+Zend\ServiceManager\Factory\AbstractFactoryInterface;' for V3 to 'use
+Zend\ServiceManager\AbstractFactoryInterface;' for V2</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$serviceLocator</var></dt>
+					<dd><code>Zend\ServiceManager\ServiceLocatorInterface</code><br>$serviceLocator</dd>
+					<dt><var>$name</var></dt>
+					<dd><code>mixed</code><br>$name</dd>
+					<dt><var>$requestedName</var></dt>
+					<dd><code>mixed</code><br>$requestedName</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>mixed</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		__zaboy-res API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>
