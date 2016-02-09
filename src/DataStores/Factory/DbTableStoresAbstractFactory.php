@@ -8,15 +8,8 @@
 
 namespace zaboy\res\DataStores\Factory;
 
-//use Zend\ServiceManager\Factory\AbstractFactoryInterface; 
-//uncomment it ^^ for Zend\ServiceManager V3
-use Zend\ServiceManager\AbstractFactoryInterface; 
-//comment it ^^ for Zend\ServiceManager V3
-use Zend\ServiceManager\ServiceLocatorInterface; 
 use Zend\Db\TableGateway\TableGateway; 
 use Interop\Container\ContainerInterface;
-use zaboy\res\DataStore\DbTable;
-
 
 /**
  * Create and return an instance of the DataStore which based on DbTable

@@ -4,7 +4,7 @@ return [
     'dataStore' => [
         'testDbTable' => [
             'class' =>'zaboy\res\DataStore\DbTable',
-            'tableName' => 'test_zav_res'
+            'tableName' => 'test_res_tablle'
             ],
         'testMemory' => [
             'class' =>'zaboy\res\DataStore\Memory',

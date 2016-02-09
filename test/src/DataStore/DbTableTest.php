@@ -109,8 +109,6 @@ class DbTableTest extends AbstractTest {
         $createStatementStr = $createStr . '(' . $filds . ') ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;';
 
         $createStatement = $this->adapter->query($createStatementStr);
-  
-
         $createStatement->execute();
     }
 
