@@ -104,10 +104,14 @@ abstract class DataStoresAbstract implements DataStoresInterface
     public function  getKeys() 
     {
         $identifier = $this->getIdentifier();
-        $keysArray = $this->find(
+        $rows = $this->find(
             null,
             array($identifier)       
         );
+        $keysArray =[];
+        foreach ($rows as $row) {
+            $keysArray[] = $row[$identifier];
+        }
         return $keysArray;
     }        
     
@@ -139,13 +143,52 @@ abstract class DataStoresAbstract implements DataStoresInterface
      * @param int|null $offset
      * @return array    Empty array or array of arrays
      */
-    abstract public function find(
+    public function find(
         $where = null,             
         $filds = null, 
         $order = null,            
         $limit = null, 
         $offset = null 
-    );
+    ){
+        $query = new Query();
+        
+        if (isset($where)) {
+            foreach ($where as $fild => $value) {
+                $eqNodes[] = new ScalarOperator\EqNode( $fild, $value);
+            }
+            if (count($eqNodes) > 1){
+                $endNode = new LogicOperator\AndNode($eqNodes);
+                $query->setQuery($endNode);
+            }else{
+                $query->setQuery($eqNodes[0]);
+            }
+        }
+        
+        if (isseet($filds)) {
+            $selectNode = new Node\SelectNode($filds);
+            $query->setSelect($selectNode);  
+        }        
+        
+        if (isseet($order)) {
+            foreach ($order as $fild => $value) {
+                if ($value == self::DESC) {
+                    $order[$fild] = SortNode::SORT_DESC;
+                }else{
+                    $order[$fild] = SortNode::SORT_ASC;
+                }
+            }
+            $sortNode = new SortNode($order);  
+            $query->setSort($sortNode);  
+        }        
+        if (isset($limit) ||  isset($offset)) {
+            $limit = isset($limit) ? $limit : 'Infinity';
+            $offset = isset($offset) ? $offset : 0;
+            $limitNode = new Node\LimitNode($limit, $offset);
+            $query->setLimit($limitNode);
+        }
+
+        return $this->query($query);
+    }
     
 // ** Interface "Zaboy_DataStores_Write_Interface" **            **                          **
     /**
@@ -203,7 +246,12 @@ abstract class DataStoresAbstract implements DataStoresInterface
       * @return int number of deleted items or null if object doesn't support it
       */
     public function deleteAll() {
-        
+        $keys = $this->getKeys();
+        $numberOfDeletedItems = 0;
+        foreach ($keys as $id) {
+            $numberOfDeletedItems = $numberOfDeletedItems + $this->delete($id);
+        }
+        return $numberOfDeletedItems;
     }
     
     
@@ -214,7 +262,8 @@ abstract class DataStoresAbstract implements DataStoresInterface
      * @return int
      */
     public function count() {
-        
+        $keys = $this->getKeys();
+        return count($keys);
     }
     
     /**

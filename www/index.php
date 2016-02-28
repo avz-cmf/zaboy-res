@@ -10,14 +10,14 @@ chdir(dirname(__DIR__));
 require '/vendor/autoload.php';
 $container = include 'config/container.php';
 
-
+/**
 //include 'test/src/DataStore/AbstractTest.php';
 include 'test/src/Middlewares/Factory/MiddlewareStoreAbstractFactoryTest.php';
 use zaboy\test\middleware\Middlewares\Factory\MiddlewareStoreAbstractFactoryTest;
 $test = new MiddlewareStoreAbstractFactoryTest();
 //$test->setUp();
-$test->testMiddlewareMemoryStore__invoke();
-
+$test->testMiddlewareMemoryStore->__invoke();
+*/
 
 echo('<!DOCTYPE html><html><head></head><body>');
 echo ( '!!!!!!!!!!!!!!' . PHP_EOL . '<br>');

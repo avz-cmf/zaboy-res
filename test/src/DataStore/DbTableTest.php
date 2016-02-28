@@ -58,6 +58,11 @@ class DbTableTest extends AbstractTest {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
+        $quoteTableName = $this->adapter->platform->quoteIdentifier($this->dbTableName) ;
+        $deleteStatementStr = "DROP TABLE IF EXISTS " .  $quoteTableName;
+        $deleteStatement = $this->adapter->query($deleteStatementStr);
+        $deleteStatement->execute();
+        
     }
 
     /**
@@ -103,11 +108,9 @@ class DbTableTest extends AbstractTest {
         $deleteStatement = $this->adapter->query($deleteStatementStr);
         $deleteStatement->execute();
 
-
         $createStr = "CREATE TABLE  " . $quoteTableName;
         $filds = $this->_getDbTableFilds($data);
         $createStatementStr = $createStr . '(' . $filds . ') ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;';
-
         $createStatement = $this->adapter->query($createStatementStr);
         $createStatement->execute();
     }
