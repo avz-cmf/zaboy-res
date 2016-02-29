@@ -24,12 +24,6 @@ use zaboy\res\DataStore\Memory;
  */
 class MiddlewareMemoryStore extends StoreMiddlewareAbstract
 {
-    /**
-     *
-     * @var zaboy\res\DataStore\Memory
-     */
-    protected $dataStore ;
-
     public function __construct(Memory $dataStore =null)
     {
         if ($dataStore !== null) {

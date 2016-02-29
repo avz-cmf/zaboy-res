@@ -15,6 +15,8 @@ use Zend\Db\Sql\Select;
 use Xiag\Rql\Parser\Query;
 use Xiag\Rql\Parser\Node\AbstractQueryNode;
 use Zend\Http\Client;
+use Zend\Http\Request;
+use zaboy\res\Rql\QueryResolver;
 
 /**
  * DataStores as http Client
@@ -84,111 +86,19 @@ class HttpClient extends DataStoresAbstract
     public function read($id)
     {
         $this->_checkIdentifierType($id);
-        $identifier = $this->getIdentifier();
-
-
-        if (isset($row) ) {
-           return $row->getArrayCopy(); 
+        $client = $this->initHttpClient(Request::METHOD_GET, null, $id);
+        $response = $client->send();
+        if ($response->isOk()) {
+            $result = $this->jsonDecode($response->getBody());
         }else{
-            return null;
-        }        
+            throw new DataStoresException(
+                'Status: ' . $response->getStatusCode() 
+                . ' - ' . $response->getReasonPhrase()    
+            );
+        }
+        return $result;
     }
 
-    /**
-     * 
-     * @return array array of keys or empty array
-     */
-    public function  getKeys() 
-    {
-        $identifier = $this->getIdentifier();
-        $select = $this->_dbTable->getSql()->select();
-        $select->columns(array($identifier));
-        $rowset = $this->_dbTable->selectWith($select);
-        $keysArrays = $rowset->toArray();
-        if(PHP_VERSION_ID >= 50500) {
-            $keys = array_column($keysArrays, $identifier);
-        }else{
-            $keys = array();
-            foreach ($keysArrays as $key => $value) {
-                $keys[] = $value[$identifier];
-            }
-        }
-        return $keys;
-    }
-    
-    /**
-     * Return items by criteria with mapping, sorting and paging
-     * 
-     * Example:
-     * <code>
-     * find(
-     *    array('fild2' => 2, 'fild5' => 'something'), // 'fild2' === 2 && 'fild5 === 'something' 
-     *    array(self::DEF_ID), // return only identifiers
-     *    array(self::DEF_ID => self::DESC),  // Sorting in reverse order by 'id" fild
-     *    10, // not more then 10 items
-     *    5 // from 6th items in result set (offset of the first item is 0)
-     * ) 
-     * </code>
-     * 
-     * ORDER
-     * http://www.simplecoding.org/sortirovka-v-mysql-neskolko-redko-ispolzuemyx-vozmozhnostej.html
-     * http://ru.php.net/manual/ru/function.usort.php
-     * 
-     * @see ASC
-     * @see DESC
-     * @param Array|null $where   
-     * @param array|null $filds What filds will be included in result set. All by default 
-     * @param array|null $order
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array    Empty array or array of arrays
-     */
-    public function find(
-        $where = null,             
-        $filds = null, 
-        $order = null,            
-        $limit = null, 
-        $offset = null 
-    ) {
-        $select = $this->_dbTable->getSql()->select();
-        
-        // ***********************   where   *********************** 
-        if (!empty($where)) {
-            $select->where($where);
-        }    
-
-        // ***********************   order   *********************** 
-        if (!empty($order)) {
-            foreach ($order as $ordKey => $ordVal) {
-                if ((int) $ordVal === self::SORT_DESC) {
-                    $select->order($ordKey . ' ' . self::DESC);
-                }else{
-                    $select->order($ordKey . ' ' . self::ASC);
-                }
-            }
-        }else{
-            $select->order($this->getIdentifier() . ' ' . self::ASC);
-        }
-        
-        // *********************  limit, offset   *********************** 
-        if (isset($limit)) { 
-            $select->limit($limit);
-        }    
-        if (isset($offset)) { 
-            $select->offset($offset);
-        }            
-        
-        // *********************  filds  *********************** 
-        if (!empty($filds)) {
-            $select->columns($filds);
-        }            
-
-        // ***********************   return   *********************** 
-        $rowset = $this->_dbTable->selectWith($select);
-        return $rowset->toArray();
-    } 
-    
-  
     /**
      * By default, insert new (by create) Item. 
      * 
@@ -207,15 +117,23 @@ class HttpClient extends DataStoresAbstract
      */
     public function create($itemData, $rewriteIfExist = false) {
         $identifier = $this->getIdentifier();
-        $adapter = $this->_dbTable->getAdapter();
-        // begin Transaction
-        $adapter->getDriver()->getConnection()->beginTransaction();
-        
-$client->setRawBody($xml);
-$client->setEncType('text/xml');
-
-        $id = $this->_dbTable->getLastInsertValue();
-        return $id;
+        if (isset($itemData[$identifier])) {
+            $id = $itemData[$identifier];
+            $this->_checkIdentifierType($id);
+        }
+        $this->_checkIdentifierType($id);
+        $client = $this->initHttpClient(Request::METHOD_POST, null, null, $rewriteIfExist);
+        $client->setRawBody($this->jsonEncode($itemData));
+        $response = $client->send();
+        if ($response->isOk()) {
+            $result = $this->jsonDecode($response->getBody());
+        }else{
+            throw new DataStoresException(
+                'Status: ' . $response->getStatusCode() 
+                . ' - ' . $response->getReasonPhrase()    
+            );
+        }
+        return $result;
     }
 
     /**
@@ -236,41 +154,23 @@ $client->setEncType('text/xml');
      */
     public function update($itemData, $createIfAbsent = false) {
         $identifier = $this->getIdentifier();
-        if (!isset($itemData[$identifier])) {
-            throw new DataStoresException( 'Item must has primary key'); 
+        if (isset($itemData[$identifier])) {
+            $id = $itemData[$identifier];
+            $this->_checkIdentifierType($id);
+        }else{
+            throw new DataStoresException('Item must has primary key'); 
         }
-        $id = $itemData[$identifier];
         $this->_checkIdentifierType($id);
-        $adapter = $this->_dbTable->getAdapter();
-        $errorMsg = 'Cann\'t update item with "id" = ' . $id; 
-        $queryStr = 'SELECT ' . Select::SQL_STAR 
-            . ' FROM ' . $adapter->platform->quoteIdentifier($this->_dbTable->getTable()) 
-            . ' WHERE ' . $adapter->platform->quoteIdentifier($identifier)  . ' = ?'  
-            . ' FOR UPDATE'; 
-        $adapter->getDriver()->getConnection()->beginTransaction();
-        try {
-            //is row with this index exist?
-            $rowset = $adapter->query($queryStr, array($id));
-            $isExist = !is_null($rowset->current());
-            switch (true) {
-                 case !$isExist && !$createIfAbsent:
-                    throw new DataStoresException($errorMsg);
-                case !$isExist && $createIfAbsent:
-                    $this->_dbTable->insert($itemData);
-                    $result = $itemData;
-                    break;
-                case $isExist:
-                    unset($itemData[$identifier]);
-                    $this->_dbTable->update($itemData, array('id' => $id));
-                    $rowset = $adapter->query($queryStr, array($id));
-                    $result = $rowset->current()->getArrayCopy();
-                    break;
-            }
-            $adapter->getDriver()->getConnection()->commit();            
-        }    
-        catch (\Exception $e) {
-            $adapter->getDriver()->getConnection()->rollback();
-            throw new DataStoresException($errorMsg, 0, $e);
+        $client = $this->initHttpClient(Request::METHOD_PUT, null, $id, $createIfAbsent);
+        $client->setRawBody($this->jsonEncode($itemData));
+        $response = $client->send();
+        if ($response->isOk()) {
+            $result = $this->jsonDecode($response->getBody());
+        }else{
+            throw new DataStoresException(
+                'Status: ' . $response->getStatusCode() 
+                . ' - ' . $response->getReasonPhrase()    
+            );
         }
         return $result;
     }
@@ -283,118 +183,115 @@ $client->setEncType('text/xml');
       */
     public function delete($id) {
         $identifier = $this->getIdentifier();
-        $this->_checkIdentifierType($id);       
-        $deletedItemsCount = $this->_dbTable->delete(array($identifier => $id));
-        return $deletedItemsCount;
+        if (isset($itemData[$identifier])) {
+            $id = $itemData[$identifier];
+            $this->_checkIdentifierType($id);
+        }else{
+            throw new DataStoresException('Item must has primary key'); 
+        }
+        $this->_checkIdentifierType($id);
+        $client = $this->initHttpClient(Request::METHOD_DELETE, null, $id);
+        $response = $client->send();
+        if ($response->isOk()) {
+            $result = $this->jsonDecode($response->getBody());
+        }else{
+            throw new DataStoresException(
+                'Status: ' . $response->getStatusCode() 
+                . ' - ' . $response->getReasonPhrase()    
+            );
+        }
+        return $result;
     }  
-    
-     /**
-      * Delete all Items.
-      * 
-      * @return int number of deleted items or null if object doesn't support it
-      */
-    public function deleteAll() {
-        $where = '1=1';
-        $deletedItemsCount = $this->_dbTable->delete( $where);
-        return $deletedItemsCount;
-    }
-    
     
     /**
      * @see coutable
      * @return int
      */
     public function count() {
-        $adapter = $this->_dbTable->getAdapter();
-        /* @var $rowset Zend\Db\ResultSet\ResultSet */
-        $rowset = $adapter->query(
-            'SELECT COUNT(*) AS count FROM ' 
-            . $adapter->platform->quoteIdentifier($this->_dbTable->getTable())
-            , $adapter::QUERY_MODE_EXECUTE);
-        return $rowset->current()['count'];
+        return parent::count();
     }    
 
     public function query(Query $query) 
     {
-        $limits = $query->getLimit();
-        $limit = !$limits ? 'Infinity' : $query->getLimit()->getLimit();
-        $offset =  !$limits ? 0 : $query->getLimit()->getOffset();
-        $sort = $query->getSort();
-        $sortFilds = !$sort ? [$this->getIdentifier()=>self::ASC] : $sort->getFields();
-        $select = $query->getSelect();  //What filds will return
-        $selectFilds = !$select ? [] : $select->getFields();
-        $selectSQL = $this->_dbTable->getSql()->select();
-        // ***********************   where   *********************** 
-        $where = $this->getQueryWhereConditioon($query->getQuery());
-        $selectSQL->where($where);
-        // ***********************   order   *********************** 
-        foreach ($sortFilds as $ordKey => $ordVal) {
-            if ((int) $ordVal === self::SORT_DESC) {
-                $selectSQL->order($ordKey . ' ' . self::DESC);
-            }else{
-                $selectSQL->order($ordKey . ' ' . self::ASC);
-            }
+        $client = $this->initHttpClient(Request::METHOD_GET, $query);
+        $response = $client->send();
+        if ($response->isOk()) {
+            $result = $this->jsonDecode($response->getBody());
+        }else{
+            throw new DataStoresException(
+                'Status: ' . $response->getStatusCode() 
+                . ' - ' . $response->getReasonPhrase()    
+            );
         }
-        // *********************  limit, offset   *********************** 
-        if ($limit<>'Infinity') { 
-            $selectSQL->limit($limit);
-        }    
-        if ($offset<>0) { 
-            $selectSQL->offset($offset);
-        }            
-        // *********************  filds  *********************** 
-        if (!empty($selectFilds)) {
-            $selectSQL->columns($selectFilds);
-        }            
-        // ***********************   return   *********************** 
-        $rowset = $this->_dbTable->selectWith($selectSQL);
-        return $rowset->toArray();
+        return $result;
     }
     
-    protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
-    {
-        $db = $this->_dbTable->getAdapter();
-        $qi = function($name) use ($db) { return $db->platform->quoteIdentifier($name); };
-        $qv = function($name) use ($db) { return $db->platform->quoteValue($name); };
-        
-        switch (true) {
-            case is_null($queryNode):
-                $conditioon = $qv(1) . ' = ' . $qv(1);
-                break;
-            case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\LogicOperator\AndNode', true):
-                /* @var $queryNode LogicOperator\AndNode */
-                $subNodes = $queryNode->getQueries();
-                $conditioon = '';
-                foreach ($subNodes as $subNode) {
-                    $conditioon = $conditioon .   
-                        '(' 
-                        . $this->getQueryWhereConditioon($subNode)
-                        . ')' . PHP_EOL . ' AND ';
-                }
-                $conditioon = rtrim($conditioon, ' AND ');
-                break;
-            case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\ScalarOperator\EqNode', true):
-                /* @var $queryNode ScalarOperator\EqNode */
-                $field = $queryNode->getField();
-                $value = $queryNode->getValue();  
-                $conditioon =  $qi($field) . ' = ' . $qv($value);
-                break;
-            default:
-                throw new DataStoresException( 
-                    'The logical condition not suppoted' . $queryNode->getNodeName()
-                ); 
-        }
-        return $conditioon;
-    }    
-    
-    protected function initHttpClient( $method, $rqlQuery, $id = null)
+    /**
+     * 
+     * @param string $method
+     * @param Query $rqlQuery
+     * @param string $id
+     * @param bool $ifMatch see $createIfAbsent and $rewriteIfExist
+     * @return Client
+     */
+    protected function initHttpClient($method, Query $rqlQuery = null, $id = null, $ifMatch = false)
     {
         $url = !$id ? $this->url : $this->url . '/' . $id;
+        $url = !$rqlQuery ? $url : $url . '?' . (new QueryResolver())->rqlEncode($query);
         $httpClient = new Client($url, $this->options);
+        $headers['Content-Type'] =  'application/json';
+        if ($ifMatch) {
+            $headers['If-Match'] =  '*';
+        }
+        $httpClient->setHeaders($headers);
         if (isset($this->login) && isset($this->password)) {
             $httpClient->setAuth($this->login, $this->password);
         }
         $httpClient->setMethod($method);
-        
+        return $httpClient;
+    }
+    
+    protected function jsonDecode($data)
+    {
+        // Clear json_last_error()
+        json_encode(null);
+
+        $result = json_decode($data);
+        json_encode(null);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new DataStoresException(
+                'Unable to decode data from JSON' .
+                json_last_error_msg()
+            );
+        }
+
+        return $result;
+    }
+   
+    /**
+     * Decode the provided data to JSON.
+     *
+     * @param mixed $data
+     * @param int $encodingOptions
+     * @return string
+     * @throws InvalidArgumentException if unable to encode the $data to JSON.
+     */
+    protected function jsonEncode($data)
+    {
+        // Clear json_last_error()
+        json_encode(null);
+
+        $result = json_encode($data, 79);
+        json_encode(null);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new DataStoresException(
+                'Unable to encode data to JSON' .
+                json_last_error_msg()
+            );
+        }
+
+        return $result;
     }
 }    

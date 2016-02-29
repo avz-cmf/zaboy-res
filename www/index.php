@@ -17,7 +17,7 @@ use zaboy\test\middleware\Middlewares\Factory\MiddlewareStoreAbstractFactoryTest
 $test = new MiddlewareStoreAbstractFactoryTest();
 //$test->setUp();
 $test->testMiddlewareMemoryStore->__invoke();
-*/
+
 
 echo('<!DOCTYPE html><html><head></head><body>');
 echo ( '!!!!!!!!!!!!!!' . PHP_EOL . '<br>');
@@ -49,9 +49,8 @@ $results = $statement->execute(array('val_id' => 3));
 $row = $results->current();
 $name = $row['notes'];
 
-/**
+*/
 $app    = new MiddlewarePipe();
-
 
 // Landing page
 $app->pipe('/', function ($req, $res, $next) {
@@ -60,12 +59,10 @@ $app->pipe('/', function ($req, $res, $next) {
     }
     return $res->end('Hello world!');
 });
-$restPipe = RestActionPipeFactory();
+
+$restPipe = (new RestActionPipeFactory)->__invoke();
 // Another page
-$app->pipe('/foo', function ($req, $res, $next) {
-    return $res->end('FOO!');
-});
+$app->pipe('/rest', $restPipe);
 
 $server = Server::createServer($app, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 $server->listen();
-*/

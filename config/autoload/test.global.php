@@ -6,6 +6,11 @@ return [
             'class' =>'zaboy\res\DataStore\DbTable',
             'tableName' => 'test_res_tablle'
             ],
+        'testHttpClient' => [
+            'class' =>'zaboy\res\DataStore\HttpClient',
+            'url' => 'rest/test_res_tablle',
+            'options' => ['timeout' => 30]
+            ],   
         'testMemory' => [
             'class' =>'zaboy\res\DataStore\Memory',
             ]
