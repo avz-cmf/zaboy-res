@@ -14,8 +14,6 @@ use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Xiag\Rql\Parser\Query;
 use Xiag\Rql\Parser\Node\AbstractQueryNode;
-use Xiag\Rql\Parser\Node\Query\LogicOperator;
-use Xiag\Rql\Parser\Node\Query\ScalarOperator;
 use Zend\Http\Client;
 
 /**

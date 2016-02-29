@@ -16,8 +16,6 @@ use Xiag\Rql\Parser\Node\SelectNode;
 use Xiag\Rql\Parser\Node\AbstractQueryNode;
 use Xiag\Rql\Parser\Node\SortNode;
 use Xiag\Rql\Parser\Node\LimitNode;
-use Xiag\Rql\Parser\Node\Query\LogicOperator;
-use Xiag\Rql\Parser\Node\Query\ScalarOperator;
 
 
 /**
