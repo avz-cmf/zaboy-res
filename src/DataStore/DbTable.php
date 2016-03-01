@@ -132,11 +132,13 @@ class DbTable extends DataStoresAbstract
         // ***********************   order   *********************** 
         if (!empty($order)) {
             foreach ($order as $ordKey => $ordVal) {
-                if ((int) $ordVal === self::SORT_DESC) {
+                if ((int)$ordVal === self::SORT_DESC) {
                     $select->order($ordKey . ' ' . self::DESC);
-                }else{
+                }elseIf ((int)$ordVal === self::SORT_ASC) {
                     $select->order($ordKey . ' ' . self::ASC);
-                }
+                }else{
+                    throw new DataStoresException('Invalid condition: ' . $ordVal);    
+                } 
             }
         }else{
             $select->order($this->getIdentifier() . ' ' . self::ASC);

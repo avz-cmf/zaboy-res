@@ -172,13 +172,6 @@ abstract class DataStoresAbstract implements DataStoresInterface
         }        
         
         if (isset($order)) {
-            foreach ($order as $fild => $value) {
-                if ($value == self::DESC) {
-                    $order[$fild] = SortNode::SORT_DESC;
-                }else{
-                    $order[$fild] = SortNode::SORT_ASC;
-                }
-            }
             $sortNode = new SortNode($order);  
             $query->setSort($sortNode);  
         }        
@@ -254,8 +247,6 @@ abstract class DataStoresAbstract implements DataStoresInterface
         
         foreach ($keys as $id) {
             $deletedNumber = $this->delete($id);
-var_dump('deleteAll $deletedNumber');         
-var_dump($deletedNumber);
             $numberOfDeletedItems = $numberOfDeletedItems + $deletedNumber;
         }
         return $numberOfDeletedItems;

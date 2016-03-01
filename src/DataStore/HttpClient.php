@@ -89,7 +89,6 @@ class HttpClient extends DataStoresAbstract
         $this->_checkIdentifierType($id);
         $client = $this->initHttpClient(Request::METHOD_GET, null, $id);
         $response = $client->send();
-var_dump($response . ' [read($id)]');
         if ($response->isOk()) {
             $result = $this->jsonDecode($response->getBody());
         }else{
@@ -126,13 +125,10 @@ var_dump($response . ' [read($id)]');
             $id = null;
         }
         $client = $this->initHttpClient(Request::METHOD_POST, null, $id, $rewriteIfExist);
-var_dump('create $json');
-
         $json = $this->jsonEncode($itemData);
-var_dump($json);
         $client->setRawBody($json);
         $response = $client->send();
-        if ($response->isOk()) {
+        if ($response->isSuccess()) {
             $result = $this->jsonDecode($response->getBody());
         }else{
             throw new DataStoresException(
@@ -161,17 +157,15 @@ var_dump($json);
      */
     public function update($itemData, $createIfAbsent = false) {
         $identifier = $this->getIdentifier();
-        if (isset($itemData[$identifier])) {
-            $id = $itemData[$identifier];
-            $this->_checkIdentifierType($id);
-        }else{
+        if (!isset($itemData[$identifier])) {
             throw new DataStoresException('Item must has primary key'); 
         }
+        $id = $itemData[$identifier];
         $this->_checkIdentifierType($id);
         $client = $this->initHttpClient(Request::METHOD_PUT, null, $id, $createIfAbsent);
         $client->setRawBody($this->jsonEncode($itemData));
         $response = $client->send();
-        if ($response->isOk()) {
+        if ($response->isSuccess()) {
             $result = $this->jsonDecode($response->getBody());
         }else{
             throw new DataStoresException(
@@ -193,7 +187,7 @@ var_dump($json);
         $this->_checkIdentifierType($id);
         $client = $this->initHttpClient(Request::METHOD_DELETE, null, $id);
         $response = $client->send();
-        if ($response->isOk()) {
+        if ($response->isSuccess()) {
             $result = $this->jsonDecode($response->getBody());
         }else{
             throw new DataStoresException(
@@ -240,8 +234,6 @@ var_dump($json);
         $url = !$id ? $this->url : $this->url . '/' . $id;
         if (isset($rqlQuery)) {
             $rqlString = (new QueryResolver())->rqlEncode($rqlQuery);
-var_dump('initHttpClient  $rqlString');             
-var_dump($rqlString);            
             $url = $url . '?' . $rqlString;
         }
         $httpClient = new Client($url, $this->options);
@@ -265,10 +257,6 @@ var_dump($rqlString);
 
         $result = Json::decode($data, Json::TYPE_ARRAY);//json_decode($data);
         json_encode(null);
-var_dump($data);
-var_dump(' [json_decode] $data');     
-var_dump($result);
-var_dump(' [json_decode] $result');
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new DataStoresException(
                 'Unable to decode data from JSON' .

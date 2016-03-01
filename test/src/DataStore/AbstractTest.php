@@ -153,7 +153,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
     public function testFind_orderId()
     {
         $this->_initObject();
-        $findArray = $this->object->find(null, null, array('id'=>'1'));        
+        $findArray = $this->object->find(null, null, array('id'=>DataStoresAbstract::SORT_ASC));        
         for ($index = 0; $index < count($this->_itemsArrayDelault); $index++) {
             $this->assertEquals(
                     array_pop($this->_itemsArrayDelault),
@@ -165,7 +165,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
     public function testFind_orderAnotherId()
     {
         $this->_initObject();
-        $findArray = $this->object->find(null, null, array('anotherId'=>1));        
+        $findArray = $this->object->find(null, null, array('anotherId'=>DataStoresAbstract::SORT_ASC));        
             $this->assertEquals(
                     array_pop($this->_itemsArrayDelault),
                     $findArray[3-1]
@@ -179,7 +179,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
     public function testFind_orderDesc()
     {
         $this->_initObject();
-        $findArray = $this->object->find(null, null, array('id'=>'-1'));        
+        $findArray = $this->object->find(null, null, array('id'=>DataStoresAbstract::SORT_DESC));        
         $this->assertEquals(
                 $this->_itemsArrayDelault[1-1] ,
                 $findArray[4-1]
@@ -193,7 +193,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
     public function testFind_orderCombo()
     {
         $this->_initObject();
-        $findArray = $this->object->find(null, null, array('fString'=>'-1', 'fFloat'=>1, 'anotherId'=>'-1'));        
+        $findArray = $this->object->find(null, null, array('fString'=>DataStoresAbstract::SORT_DESC, 'fFloat'=>DataStoresAbstract::SORT_ASC, 'anotherId'=>DataStoresAbstract::SORT_DESC));        
         $this->assertEquals(
                 $this->_itemsArrayDelault[4-1] ,
                 $findArray[1-1]
@@ -228,7 +228,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
         $findArray = $this->object->find(
                 array('fString'=> 'val2', 'fFloat' => 300.003),
                 null, null
-                //array('id'=>1)
+                //array('id'=>DataStoresAbstract::SORT_ASC)
          );        
         $this->assertEquals(
                 $this->_itemsArrayDelault[2-1] ,
@@ -246,7 +246,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
         $findArray = $this->object->find(
                 array('fString'=> 'val2', 'fFloat' => 300.003),
                 array('fFloat'),
-                array('id'=>1)
+                array('id'=>DataStoresAbstract::SORT_ASC)
          );        
         $this->assertEquals(
                 array('fFloat' => $this->_itemsArrayDelault[2-1]['fFloat']) ,
@@ -264,7 +264,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
         $findArray = $this->object->find(
                 array('fString'=> 'val2', 'fFloat' => 300.003),
                 array('fFloat'),
-                array('id'=>1),
+                array('id'=>DataStoresAbstract::SORT_ASC),
                 1
          );        
         $this->assertEquals(
@@ -283,7 +283,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
         $findArray = $this->object->find(
                 array('fString'=> 'val2', 'fFloat' => 300.003),
                 array('fFloat'),
-                array('id'=>1),
+                array('id'=>DataStoresAbstract::SORT_ASC),
                 null,
                 1
          );        
@@ -303,7 +303,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
         $findArray = $this->object->find(
                 array('fString'=> 'val2'),
                 array('fFloat'),
-                array('id'=>1),
+                array('id'=>DataStoresAbstract::SORT_ASC),
                 2,
                 1
          );        
@@ -336,7 +336,6 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
 
     public function testCreate_withoutId()
     {
-var_dump('testCreate_withoutId $id');
         $this->_initObject();
         $id = $this->object->create(
             array(
@@ -344,8 +343,6 @@ var_dump('testCreate_withoutId $id');
                 'fString'=> 'Create_withoutId_'
             )
         );
-
-var_dump($id);
         $insertedItem = $this->object->read($id);
         $this->assertEquals(
                 'Create_withoutId_',
