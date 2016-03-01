@@ -53,7 +53,7 @@ class TableGatewayAbstractFactoryTest extends \PHPUnit_Framework_TestCase {
     
 
     public function testTableGatewayAbstractFactory__canCreateIfTableExist() {
-        $createStatementStr = 'CREATE TEMPORARY TABLE IF NOT EXISTS tbl_name_which_exist (id INT)';
+        $createStatementStr = 'CREATE TABLE IF NOT EXISTS tbl_name_which_exist (id INT)';
         $createStatement = $this->adapter->query($createStatementStr);
         $createStatement->execute();
         
@@ -63,10 +63,13 @@ class TableGatewayAbstractFactoryTest extends \PHPUnit_Framework_TestCase {
                 true,
                 $result
         );
+        $createStatementStr = 'DROP TABLE IF EXISTS tbl_name_which_exist';
+        $createStatement = $this->adapter->query($createStatementStr);
+        $createStatement->execute();
     }
 
     public function testTableGatewayAbstractFactory__invokeIfTableAbsent() {
-        $createStatementStr = 'CREATE TEMPORARY TABLE IF NOT EXISTS tbl_name_which_exist (id INT)';
+        $createStatementStr = 'CREATE TABLE IF NOT EXISTS tbl_name_which_exist (id INT)';
         $createStatement = $this->adapter->query($createStatementStr);
         $createStatement->execute();
         
@@ -76,5 +79,8 @@ class TableGatewayAbstractFactoryTest extends \PHPUnit_Framework_TestCase {
                 'Zend\Db\TableGateway\TableGateway',
                 get_class($result)
         );
+        $createStatementStr = 'DROP TABLE IF EXISTS tbl_name_which_exist';
+        $createStatement = $this->adapter->query($createStatementStr);
+        $createStatement->execute();
     }
 }

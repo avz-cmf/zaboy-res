@@ -8,7 +8,8 @@ return [
             ],
         'testHttpClient' => [
             'class' =>'zaboy\res\DataStore\HttpClient',
-            'url' => 'rest/test_res_tablle',
+            'tableName' => 'test_res_http',
+            'url' => 'http://__zaboy-rest/api/rest/test_res_http',
             'options' => ['timeout' => 30]
             ],   
         'testMemory' => [
@@ -28,7 +29,9 @@ return [
         'abstract_factories' => [
             'zaboy\res\DataStores\Factory\DbTableStoresAbstractFactory',
             'zaboy\res\DataStores\Factory\MemoryStoresAbstractFactory' ,
+            'zaboy\res\DataStores\Factory\HttpClientStoresAbstractFactory',            
             'zaboy\res\Middlewares\Factory\MiddlewareStoreAbstractFactory'
+
         ]    
     ]
 ];

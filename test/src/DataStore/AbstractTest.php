@@ -63,16 +63,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
             array( 'id' => 4,'anotherId' => 30, 'fString' => 'val2', 'fFloat' => 100.1 ,   'nll' => null)
         )
     ;
-    
 
-    protected $_itemsArrayNull  =    
-        array(
-            array( 'id' => 1, 'nll' => 1,      'abs' => 'val1'  ),
-            array( 'id' => 2, 'nll' => null                     ),
-            array( 'id' => 3, 'nll' => null                     ),  
-        )
-    ;
-    
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
