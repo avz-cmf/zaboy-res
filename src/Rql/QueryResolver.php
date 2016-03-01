@@ -8,6 +8,7 @@
 
 namespace zaboy\res\Rql;
 
+use zaboy\res\DataStores\DataStoresAbstract;
 use zaboy\res\DataStores\DataStoresException;
 use Xiag\Rql\Parser\Query;
 use Xiag\Rql\Parser\Node\AbstractQueryNode;
@@ -125,9 +126,9 @@ class QueryResolver
     public function  makeLimit(Query $query) 
     {
         $objLimit = $query->getLimit();
-        $limit = !$objLimit ? 'Infinity' : $objLimit->getLimit();
+        $limit = !$objLimit ? DataStoresAbstract::LIMIT_INFINITY : $objLimit->getLimit();
         $offset =  !$objLimit ? 0 : $objLimit->getOffset();
-        if ($limit == 'Infinity' && $offset == 0) {
+        if ($limit == DataStoresAbstract::LIMIT_INFINITY && $offset == 0) {
             return '';     
         }else{
             $strLimit =  sprintf('limit(%s,%s)',$limit, $offset);

@@ -4,6 +4,7 @@ namespace zaboy\test\res\Rql;
 
 use zaboy\res\Rql\QueryResolver;
 use zaboy\res\DataStores\DataStoresException;
+use zaboy\res\DataStores\DataStoresAbstract;
 use Xiag\Rql\Parser\Query;
 use Xiag\Rql\Parser\Node\AbstractQueryNode;
 use Xiag\Rql\Parser\Node\SortNode;
@@ -91,7 +92,7 @@ class QueryResolverTest extends \PHPUnit_Framework_TestCase {
     
     public function testRqlEncode_Limit() {
         $query = new Query();
-        $limitNode = new Node\LimitNode('Infinity',0);
+        $limitNode = new Node\LimitNode(DataStoresAbstract::LIMIT_INFINITY,0);
         $query->setLimit($limitNode);  
         $this->assertEquals(
             '',
@@ -103,10 +104,10 @@ class QueryResolverTest extends \PHPUnit_Framework_TestCase {
             'limit(1,0)',
             $this->object->rqlEncode($query)
         );
-        $limitNode = new Node\LimitNode('Infinity',2);
+        $limitNode = new Node\LimitNode(DataStoresAbstract::LIMIT_INFINITY,2);
         $query->setLimit($limitNode);  
         $this->assertEquals(
-            'limit(Infinity,2)',
+            'limit(' . DataStoresAbstract::LIMIT_INFINITY . ',2)',
             $this->object->rqlEncode($query)
         );
     }

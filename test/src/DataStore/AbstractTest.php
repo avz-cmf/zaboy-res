@@ -8,6 +8,7 @@
 
 namespace zaboy\test\res\DataStore;
 
+use zaboy\res\DataStores\DataStoresAbstract;
 use zaboy\res\DataStores\DataStoresException;
 use Xiag\Rql\Parser\Node\Query\ScalarOperator;
 use Xiag\Rql\Parser\Node\Query\LogicOperator;
@@ -226,8 +227,8 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
         $this->_initObject();
         $findArray = $this->object->find(
                 array('fString'=> 'val2', 'fFloat' => 300.003),
-                null,
-                array('id'=>1)
+                null, null
+                //array('id'=>1)
          );        
         $this->assertEquals(
                 $this->_itemsArrayDelault[2-1] ,
@@ -335,16 +336,19 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
 
     public function testCreate_withoutId()
     {
+var_dump('testCreate_withoutId $id');
         $this->_initObject();
         $id = $this->object->create(
             array(
                 'fFloat' => 1000.01,
-                'fString'=> 'Create_withoutId'
+                'fString'=> 'Create_withoutId_'
             )
         );
+
+var_dump($id);
         $insertedItem = $this->object->read($id);
         $this->assertEquals(
-                'Create_withoutId',
+                'Create_withoutId_',
                 $insertedItem['fString']
         );
         $this->assertEquals(
@@ -841,7 +845,8 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
         $query->setSort($sortNode);  
         $selectNode = new Node\SelectNode(['fFloat']);
         $query->setSelect($selectNode);  
-        $limitNode = new Node\LimitNode('Infinity', 1);
+        $limitNode = new Node\LimitNode(DataStoresAbstract::LIMIT_INFINITY, 1); 
+
         $query->setLimit($limitNode);
         $queryArray = $this->object->query($query);
         $this->assertEquals(

@@ -17,6 +17,7 @@ use Xiag\Rql\Parser\Node\AbstractQueryNode;
 use Zend\Http\Client;
 use Zend\Http\Request;
 use zaboy\res\Rql\QueryResolver;
+use Zend\Json\Json;
 
 /**
  * DataStores as http Client
@@ -61,7 +62,7 @@ class HttpClient extends DataStoresAbstract
     {
         parent::__construct($options);
         if (isset($options['login']) && isset($options['password'])) {
-            $this->login = options['login'];
+            $this->login = $options['login'];
             $this->password = $options['password'];
         }
         $this->url = rtrim(trim($url),'/');
@@ -88,6 +89,7 @@ class HttpClient extends DataStoresAbstract
         $this->_checkIdentifierType($id);
         $client = $this->initHttpClient(Request::METHOD_GET, null, $id);
         $response = $client->send();
+var_dump($response . ' [read($id)]');
         if ($response->isOk()) {
             $result = $this->jsonDecode($response->getBody());
         }else{
@@ -120,10 +122,15 @@ class HttpClient extends DataStoresAbstract
         if (isset($itemData[$identifier])) {
             $id = $itemData[$identifier];
             $this->_checkIdentifierType($id);
+        }else{
+            $id = null;
         }
-        $this->_checkIdentifierType($id);
-        $client = $this->initHttpClient(Request::METHOD_POST, null, null, $rewriteIfExist);
-        $client->setRawBody($this->jsonEncode($itemData));
+        $client = $this->initHttpClient(Request::METHOD_POST, null, $id, $rewriteIfExist);
+var_dump('create $json');
+
+        $json = $this->jsonEncode($itemData);
+var_dump($json);
+        $client->setRawBody($json);
         $response = $client->send();
         if ($response->isOk()) {
             $result = $this->jsonDecode($response->getBody());
@@ -183,12 +190,6 @@ class HttpClient extends DataStoresAbstract
       */
     public function delete($id) {
         $identifier = $this->getIdentifier();
-        if (isset($itemData[$identifier])) {
-            $id = $itemData[$identifier];
-            $this->_checkIdentifierType($id);
-        }else{
-            throw new DataStoresException('Item must has primary key'); 
-        }
         $this->_checkIdentifierType($id);
         $client = $this->initHttpClient(Request::METHOD_DELETE, null, $id);
         $response = $client->send();
@@ -237,9 +238,15 @@ class HttpClient extends DataStoresAbstract
     protected function initHttpClient($method, Query $rqlQuery = null, $id = null, $ifMatch = false)
     {
         $url = !$id ? $this->url : $this->url . '/' . $id;
-        $url = !$rqlQuery ? $url : $url . '?' . (new QueryResolver())->rqlEncode($query);
+        if (isset($rqlQuery)) {
+            $rqlString = (new QueryResolver())->rqlEncode($rqlQuery);
+var_dump('initHttpClient  $rqlString');             
+var_dump($rqlString);            
+            $url = $url . '?' . $rqlString;
+        }
         $httpClient = new Client($url, $this->options);
         $headers['Content-Type'] =  'application/json';
+        $headers['Accept'] =  'application/json';
         if ($ifMatch) {
             $headers['If-Match'] =  '*';
         }
@@ -256,9 +263,12 @@ class HttpClient extends DataStoresAbstract
         // Clear json_last_error()
         json_encode(null);
 
-        $result = json_decode($data);
+        $result = Json::decode($data, Json::TYPE_ARRAY);//json_decode($data);
         json_encode(null);
-
+var_dump($data);
+var_dump(' [json_decode] $data');     
+var_dump($result);
+var_dump(' [json_decode] $result');
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new DataStoresException(
                 'Unable to decode data from JSON' .

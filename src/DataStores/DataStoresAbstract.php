@@ -12,10 +12,12 @@ use zaboy\res\DataStores\DataStoresInterface;
 use zaboy\res\DataStores\DataStoresException;
 use zaboy\res\DataStores\Read\DataStoreIterator;
 use Xiag\Rql\Parser\Query;
-use Xiag\Rql\Parser\Node\SelectNode;
+use Xiag\Rql\Parser\Node;
 use Xiag\Rql\Parser\Node\AbstractQueryNode;
 use Xiag\Rql\Parser\Node\SortNode;
 use Xiag\Rql\Parser\Node\LimitNode;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator;
+use Xiag\Rql\Parser\Node\Query\LogicOperator;
 
 
 /**
@@ -37,6 +39,8 @@ abstract class DataStoresAbstract implements DataStoresInterface
     const INT_TYPE    = "integer" ;
     const FLOAT_TYPE = "double"; // (for historical reasons "double" is returned in case of a float, and not simply "float")  ;
     const STR_TYPE  = "string" ;   
+    
+    const LIMIT_INFINITY = 2147483647;
 
     
     /**
@@ -162,12 +166,12 @@ abstract class DataStoresAbstract implements DataStoresInterface
             }
         }
         
-        if (isseet($filds)) {
+        if (isset($filds)) {
             $selectNode = new Node\SelectNode($filds);
             $query->setSelect($selectNode);  
         }        
         
-        if (isseet($order)) {
+        if (isset($order)) {
             foreach ($order as $fild => $value) {
                 if ($value == self::DESC) {
                     $order[$fild] = SortNode::SORT_DESC;
@@ -179,7 +183,7 @@ abstract class DataStoresAbstract implements DataStoresInterface
             $query->setSort($sortNode);  
         }        
         if (isset($limit) ||  isset($offset)) {
-            $limit = isset($limit) ? $limit : 'Infinity';
+            $limit = isset($limit) ? $limit : self::LIMIT_INFINITY;
             $offset = isset($offset) ? $offset : 0;
             $limitNode = new Node\LimitNode($limit, $offset);
             $query->setLimit($limitNode);
@@ -246,8 +250,13 @@ abstract class DataStoresAbstract implements DataStoresInterface
     public function deleteAll() {
         $keys = $this->getKeys();
         $numberOfDeletedItems = 0;
+        
+        
         foreach ($keys as $id) {
-            $numberOfDeletedItems = $numberOfDeletedItems + $this->delete($id);
+            $deletedNumber = $this->delete($id);
+var_dump('deleteAll $deletedNumber');         
+var_dump($deletedNumber);
+            $numberOfDeletedItems = $numberOfDeletedItems + $deletedNumber;
         }
         return $numberOfDeletedItems;
     }
@@ -299,16 +308,16 @@ abstract class DataStoresAbstract implements DataStoresInterface
     public function query(Query $query) 
     {
         $limits = $query->getLimit();
-        $limit = !$limits ? 'Infinity' : $query->getLimit()->getLimit();
+        $limit = !$limits ? 'self::LIMIT_INFINITY' : $query->getLimit()->getLimit();
         $offset =  !$limits ? 0 : $query->getLimit()->getOffset();
         $sort = $query->getSort();
         $sortFilds = !$sort ? [] : $sort->getFields();
         $select = $query->getSelect();
         $selectFilds = !$select ? [] : $select->getFields();
         if (isset($limits) && isset($sort)) {
-                $data = $this->doQueryWhere($this, $query, 'Infinity', 0); 
+                $data = $this->doQueryWhere($this, $query, 'self::LIMIT_INFINITY', 0); 
                 $sortedData = $this->sortQueryResult($data, $sortFilds);
-                $result = array_slice($sortedData, $offset, $limit=='Infinity'?null:$limit);
+                $result = array_slice($sortedData, $offset, $limit=='self::LIMIT_INFINITY'?null:$limit);
         }else{
                 $data = $this->doQueryWhere($this, $query, $limit, $offset);
                 $result = $this->sortQueryResult($data, $sortFilds);
@@ -379,7 +388,7 @@ abstract class DataStoresAbstract implements DataStoresInterface
                     // increment!
                     $i = $i +1;
                     break;      
-                case $limit <> 'Infinity' && $i >= ($limit + $offset): 
+                case $limit <> 'self::LIMIT_INFINITY' && $i >= ($limit + $offset): 
                     //enough!
                     return $result;             
                 default:

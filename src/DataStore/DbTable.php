@@ -300,7 +300,7 @@ class DbTable extends DataStoresAbstract
     public function query(Query $query) 
     {
         $limits = $query->getLimit();
-        $limit = !$limits ? 'Infinity' : $query->getLimit()->getLimit();
+        $limit = !$limits ? self::LIMIT_INFINITY : $query->getLimit()->getLimit();
         $offset =  !$limits ? 0 : $query->getLimit()->getOffset();
         $sort = $query->getSort();
         $sortFilds = !$sort ? [$this->getIdentifier()=>self::ASC] : $sort->getFields();
@@ -319,7 +319,7 @@ class DbTable extends DataStoresAbstract
             }
         }
         // *********************  limit, offset   *********************** 
-        if ($limit<>'Infinity') { 
+        if ($limit<>self::LIMIT_INFINITY) { 
             $selectSQL->limit($limit);
         }    
         if ($offset<>0) { 
