@@ -174,7 +174,8 @@ class ErrorTest extends  \PHPUnit_Framework_TestCase {
 
     /*     * ************************** Identifier *********************** */
 
-
+file_put_contents('logrest.txt', print_r('   $newRow ' , 1), FILE_APPEND);
+file_put_contents('logrest.txt', print_r($newRow, 1), FILE_APPEND);
 
     public function testCreate_withtId()
     {

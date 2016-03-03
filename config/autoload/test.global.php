@@ -24,7 +24,6 @@ return [
     ],   
     'services' => [
         'factories' => [
-            'db' => 'zaboy\res\Db\Adapter\AdapterFactory'       
         ],
         'abstract_factories' => [
             'zaboy\res\DataStores\Factory\DbTableStoresAbstractFactory',

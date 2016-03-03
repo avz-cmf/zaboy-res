@@ -2,7 +2,7 @@
 return [ 
     'db' => [
         'driver' => 'Pdo_Mysql',
-        'database' => 'zav_res',
+        'database' => 'zaboy_rest',
         'username' => 'root',
         'password' => ''
     ] 
