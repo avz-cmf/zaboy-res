@@ -10,14 +10,14 @@ namespace zaboy\res\DataStore;
 
 use zaboy\res\DataStores\DataStoresAbstract;
 use zaboy\res\DataStores\DataStoresException;
-use Zend\Db\TableGateway\TableGateway;
-use Zend\Db\Sql\Select;
+use zaboy\res\DataStore\ConditionBuilder\RqlConditionBuilder;
 use Xiag\Rql\Parser\Query;
 use Xiag\Rql\Parser\Node\AbstractQueryNode;
+use Xiag\Rql\Parser\Node\SortNode;
 use Zend\Http\Client;
 use Zend\Http\Request;
-use zaboy\res\Rql\QueryResolver;
 use Zend\Json\Json;
+
 
 /**
  * DataStores as http Client
@@ -58,20 +58,27 @@ class HttpClient extends DataStoresAbstract
      * @param string $url  'http://example.org'
      * @param array $options
      */
-    public function __construct($url, $options = null )
+    public function __construct($url, $options = null, ConditionBuilderAbstract $conditionBuilder = null)
     {
         parent::__construct($options);
-        if (isset($options['login']) && isset($options['password'])) {
-            $this->login = $options['login'];
-            $this->password = $options['password'];
+        if (is_array($options)) {
+            if (isset($options['login']) && isset($options['password'])) {
+                $this->login = $options['login'];
+                $this->password = $options['password'];
+            }
+            $this->url = rtrim(trim($url),'/');
+            $supportedKeys = [
+                'maxredirects',
+                'useragent',
+                'timeout',
+            ];
+            $this->options = array_intersect_key($options, array_flip($supportedKeys));
         }
-        $this->url = rtrim(trim($url),'/');
-        $supportedKeys = [
-            'maxredirects',
-            'useragent',
-            'timeout',
-        ];
-        $this->options = array_intersect_key($options, array_flip($supportedKeys));
+        if ( isset($conditionBuilder)) {
+            $this->_conditionBuilder = $conditionBuilder;
+        }  else {
+            $this->_conditionBuilder = new RqlConditionBuilder;
+        }
     }        
             
             
@@ -208,6 +215,7 @@ class HttpClient extends DataStoresAbstract
 
     public function query(Query $query) 
     {
+var_dump('Http   public function query( -------->');
         $client = $this->initHttpClient(Request::METHOD_GET, $query);
         $response = $client->send();
         if ($response->isOk()) {
@@ -221,6 +229,59 @@ class HttpClient extends DataStoresAbstract
         return $result;
     }
     
+    public function  rqlEncode(Query $query) 
+    {
+var_dump('Http   public function rqlEncode( -------->');
+        $rqlQueryString = $this->getQueryWhereConditioon($query->getQuery());
+        $rqlQueryString = $this->makeLimit($query, $rqlQueryString);
+        $rqlQueryString = $this->makeSort($query, $rqlQueryString);     
+        $rqlQueryString = $this->makeSelect($query, $rqlQueryString);  
+var_dump('Astruct where -------->' . $rqlQueryString);
+        return ltrim($rqlQueryString,'&');
+    }
+
+    public function  makeLimit(Query $query, $rqlQueryString) 
+    {
+        $objLimit = $query->getLimit();
+        $limit = !$objLimit ? DataStoresAbstract::LIMIT_INFINITY : $objLimit->getLimit();
+        $offset =  !$objLimit ? 0 : $objLimit->getOffset();
+        if ($limit == DataStoresAbstract::LIMIT_INFINITY && $offset == 0) {
+            return $rqlQueryString;     
+        }else{
+            $rqlQueryString =  $rqlQueryString . sprintf('&limit(%s,%s)',$limit, $offset);
+            return $rqlQueryString;      
+        }  
+    }
+
+    public function  makeSort(Query $query, $rqlQueryString) 
+    {
+        $objSort = $query->getSort();
+        $sortFilds = !$objSort ? [] : $objSort->getFields();
+        if (empty($sortFilds)) {
+            return $rqlQueryString;      
+        }else{
+            $strSelect =  'sort(';
+            foreach ($sortFilds as $key => $value) {
+                $prefix = $value == SortNode::SORT_DESC ? '-' : '+';
+                $strSelect =  $strSelect . $prefix . $key . ',';
+            }
+            $rqlQueryString = $rqlQueryString . rtrim($strSelect, ',') . ')';
+            return $rqlQueryString;      
+        }  
+    }
+
+    public function makeSelect(Query $query, $rqlQueryString) 
+    {
+        $objSelect = $query->getSelect();  //What filds will return
+        $selectFilds = !$objSelect ? [] : $objSelect->getFields();
+        if (empty($selectFilds)) {
+            return $rqlQueryString;   
+        }else{
+            $rqlQueryString =  $rqlQueryString . '&select(' . implode(',', $selectFilds) . ')';
+            return $rqlQueryString;      
+        }  
+    }
+    
     /**
      * 
      * @param string $method
@@ -229,13 +290,15 @@ class HttpClient extends DataStoresAbstract
      * @param bool $ifMatch see $createIfAbsent and $rewriteIfExist
      * @return Client
      */
-    protected function initHttpClient($method, Query $rqlQuery = null, $id = null, $ifMatch = false)
+    protected function initHttpClient($method, Query $query = null, $id = null, $ifMatch = false)
     {
+        
         $url = !$id ? $this->url : $this->url . '/' . $id;
-        if (isset($rqlQuery)) {
-            $rqlString = (new QueryResolver())->rqlEncode($rqlQuery);
+        if (isset($query)) {
+            $rqlString = $this->rqlEncode($query);
             $url = $url . '?' . $rqlString;
         }
+var_dump('Http   public function initHttpClient( -------->' . $url);
         $httpClient = new Client($url, $this->options);
         $headers['Content-Type'] =  'application/json';
         $headers['Accept'] =  'application/json';
@@ -267,6 +330,7 @@ class HttpClient extends DataStoresAbstract
         return $result;
     }
    
+    
     /**
      * Decode the provided data to JSON.
      *
@@ -292,4 +356,10 @@ class HttpClient extends DataStoresAbstract
 
         return $result;
     }
+    
+    protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
+    {
+        $conditionBuilder = $this->_conditionBuilder;
+        return $conditionBuilder($queryNode);
+    }    
 }    

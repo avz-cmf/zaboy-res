@@ -19,7 +19,7 @@ use zaboy\res\DataStore\Memory;
 
 
 /**
- * Create and return an instance of the DataStore which based on DbTable
+ * Create and return an instance of the array in Memory
  * 
  * This Factory depends on Container (which should return an 'config' as array)
  *

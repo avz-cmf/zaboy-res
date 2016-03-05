@@ -5,12 +5,9 @@
  * @copyright  Zaboychenko Andrey
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-
 namespace zaboy\res\DataStores\Factory;
-
 use Zend\Db\TableGateway\TableGateway; 
 use Interop\Container\ContainerInterface;
-
 /**
  * Create and return an instance of the DataStore which based on DbTable
  * 
@@ -62,7 +59,6 @@ class DbTableStoresAbstractFactory extends DataStoresAbstractFactoryAbstract
         $requestedClassName = $config['dataStore'][$requestedName]['class'];
         return is_a($requestedClassName, 'zaboy\res\DataStore\DbTable', true);
     }
-
     /**
      * Create and return an instance of the DataStore.
      *

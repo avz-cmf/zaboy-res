@@ -85,8 +85,8 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
      * This method init $this->object
      */
     abstract protected function _initObject($data = null);
- 
-/**************************** Identifier ************************/
+
+// **************************** Identifier ************************
     
     public function testSetIdentifier() {
         $this->_initObject();
@@ -619,9 +619,22 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
             $this->_itemsArrayDelault[0],
             $this->object->query($query)[0]
         );
-
     }         
-    
+
+    public function test_QueryNe()
+    {
+        $this->_initObject();
+        $query = new Query();
+        $eqNode = new ScalarOperator\NeNode(
+            'fString', 'val2'
+        );
+        $query->setQuery($eqNode);
+        
+        $this->assertEquals(
+            1,
+            count($this->object->query($query))
+        );
+    }   
 
     public function test_QueryAndNode()
     {
@@ -884,4 +897,6 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
                 count($queryArray)
         );
     }         
+
+
 }

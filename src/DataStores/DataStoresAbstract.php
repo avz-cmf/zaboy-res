@@ -41,7 +41,12 @@ abstract class DataStoresAbstract implements DataStoresInterface
     const STR_TYPE  = "string" ;   
     
     const LIMIT_INFINITY = 2147483647;
-
+    
+    /**
+     *
+     * @var \zaboy\res\DataStores\ConditionBuilderAbstract
+     */
+    protected $_conditionBuilder;    
     
     /**
      * 
@@ -391,37 +396,8 @@ abstract class DataStoresAbstract implements DataStoresInterface
         return $result;
     }
     
-    protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
-    {
-        switch (true) {
-            case is_null($queryNode):
-                $conditioon = true;
-                break;
-            case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\LogicOperator\AndNode', true):
-                /* @var $queryNode LogicOperator\AndNode */
-                $subNodes = $queryNode->getQueries();
-                $conditioon = '';
-                foreach ($subNodes as $subNode) {
-                    $conditioon = $conditioon .   
-                        '(' 
-                        . $this->getQueryWhereConditioon($subNode)
-                        . ')' . PHP_EOL . ' && ';
-                }
-                $conditioon = rtrim($conditioon, ' && ');
-                break;
-            case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\ScalarOperator\EqNode', true):
-                /* @var $queryNode ScalarOperator\EqNode */
-                $field = $queryNode->getField();
-                $value = $queryNode->getValue();  
-                $conditioon =  'isset($item["' . $field . '"]) && $item["' . $field . '"] == "' . $value . '"';
-                break;
-            default:
-                throw new DataStoresException( 
-                    'The logical condition not suppoted' . $queryNode->getNodeName()
-                ); 
-        }
-            return $conditioon;
-    }        
+    abstract protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null);
+   
     
     protected function getQueryWhereFunction($conditioon)
     {
@@ -430,6 +406,7 @@ abstract class DataStoresAbstract implements DataStoresInterface
             . rtrim($conditioon, PHP_EOL) . ';' . PHP_EOL 
             . 'return $result;'
         ;
+        var_dump('Astruct where -------->' . $whereFunctionBody);
         $whereFunction = create_function('$item', $whereFunctionBody);
         return $whereFunction;
     }

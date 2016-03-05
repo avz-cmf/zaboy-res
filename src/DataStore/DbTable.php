@@ -10,6 +10,8 @@ namespace zaboy\res\DataStore;
 
 use zaboy\res\DataStores\DataStoresAbstract;
 use zaboy\res\DataStores\DataStoresException;
+use zaboy\res\DataStore\ConditionBuilder\SqlConditionBuilder;
+use zaboy\res\DataStores\ConditionBuilderAbstract;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Xiag\Rql\Parser\Query;
@@ -30,6 +32,7 @@ class DbTable extends DataStoresAbstract
      *
      * @var \Zend\Db\TableGateway\TableGateway 
      */
+    
     protected $_dbTable;
     
     /**
@@ -37,10 +40,16 @@ class DbTable extends DataStoresAbstract
      * @param TableGateway $dbTable
      * @param array $options
      */
-    public function __construct(TableGateway $dbTable)
+    public function __construct(TableGateway $dbTable, ConditionBuilderAbstract $conditionBuilder = null)
     {
         parent::__construct();
         $this->_dbTable = $dbTable;
+        if ( isset($conditionBuilder)) {
+            $this->_conditionBuilder = $conditionBuilder;
+        }  else {
+            $db = $dbTable->getAdapter();
+            $this->_conditionBuilder = new SqlConditionBuilder($db);
+        }
     }        
             
             
@@ -312,6 +321,9 @@ class DbTable extends DataStoresAbstract
         // ***********************   where   *********************** 
         $where = $this->getQueryWhereConditioon($query->getQuery());
         $selectSQL->where($where);
+var_dump('db-----/.' );  
+var_dump($where);
+      
         // ***********************   order   *********************** 
         foreach ($sortFilds as $ordKey => $ordVal) {
             if ((int) $ordVal === self::SORT_DESC) {
@@ -329,47 +341,19 @@ class DbTable extends DataStoresAbstract
         }            
         // *********************  filds  *********************** 
         if (!empty($selectFilds)) {
+
             $selectSQL->columns($selectFilds);
         }            
         // ***********************   return   *********************** 
+
         $rowset = $this->_dbTable->selectWith($selectSQL);
         return $rowset->toArray();
     }
     
     protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
     {
-        $db = $this->_dbTable->getAdapter();
-        $qi = function($name) use ($db) { return $db->platform->quoteIdentifier($name); };
-        $qv = function($name) use ($db) { return $db->platform->quoteValue($name); };
-        
-        switch (true) {
-            case is_null($queryNode):
-                $conditioon = $qv(1) . ' = ' . $qv(1);
-                break;
-            case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\LogicOperator\AndNode', true):
-                /* @var $queryNode LogicOperator\AndNode */
-                $subNodes = $queryNode->getQueries();
-                $conditioon = '';
-                foreach ($subNodes as $subNode) {
-                    $conditioon = $conditioon .   
-                        '(' 
-                        . $this->getQueryWhereConditioon($subNode)
-                        . ')' . PHP_EOL . ' AND ';
-                }
-                $conditioon = rtrim($conditioon, ' AND ');
-                break;
-            case is_a($queryNode, '\Xiag\Rql\Parser\Node\Query\ScalarOperator\EqNode', true):
-                /* @var $queryNode ScalarOperator\EqNode */
-                $field = $queryNode->getField();
-                $value = $queryNode->getValue();  
-                $conditioon =  $qi($field) . ' = ' . $qv($value);
-                break;
-            default:
-                throw new DataStoresException( 
-                    'The logical condition not suppoted' . $queryNode->getNodeName()
-                ); 
-        }
-        return $conditioon;
+        $conditionBuilder = $this->_conditionBuilder;
+        return $conditionBuilder($queryNode);
     }    
     
 }    

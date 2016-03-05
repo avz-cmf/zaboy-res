@@ -50,6 +50,8 @@ $row = $results->current();
 $name = $row['notes'];
 
 */
+        $object = $container->get('testHttpClient');    
+
 $app    = new MiddlewarePipe();
 
 // Landing page

@@ -10,6 +10,8 @@ namespace zaboy\res\DataStore;
 
 use zaboy\res\DataStores\DataStoresAbstract;
 use zaboy\res\DataStores\DataStoresException;
+use zaboy\res\DataStore\ConditionBuilder\PhpConditionBuilder;
+use Xiag\Rql\Parser\Node\AbstractQueryNode;
 
 /**
  * DataStores as array
@@ -20,6 +22,7 @@ use zaboy\res\DataStores\DataStoresException;
  */
 class Memory extends DataStoresAbstract
 {    
+
     /**
      * Collected items
      * @var array
@@ -30,10 +33,14 @@ class Memory extends DataStoresAbstract
      * 
      * @param array $itemsSorce
      */
-    public function __construct(array $options = null)
+    public function __construct(array $options = null, ConditionBuilderAbstract $conditionBuilder = null)
     {
         parent::__construct($options);
-        $identifier = $this->getIdentifier();
+        if ( isset($conditionBuilder)) {
+            $this->_conditionBuilder = $conditionBuilder;
+        }  else {
+            $this->_conditionBuilder = new PhpConditionBuilder;
+        }
     }           
             
             
@@ -288,4 +295,9 @@ class Memory extends DataStoresAbstract
         return count($this->_items);
     }
     
+    protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
+    {
+        $conditionBuilder = $this->_conditionBuilder;
+        return $conditionBuilder($queryNode);
+    }    
 }

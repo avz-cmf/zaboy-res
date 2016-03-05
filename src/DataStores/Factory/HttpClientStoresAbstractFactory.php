@@ -17,22 +17,7 @@ use zaboy\res\DataStore\HttpClient;
  * 
  * This Factory depends on Container (which should return an 'config' as array)
  *
- * The configuration can contain:
- * <code>
- * 	'db' => [
- *		'driver' => 'Pdo_Mysql',
- * 		'host' => 'localhost',
- *		'database' => '',
- *	]
- * 'DataStore' => [
- *
- *     'DbTable' => [
- *         'class' => 'mydatabase',
- *         'tableName' => 'mytableName',
- *         'dbAdapter' => 'db' // Service Name. 'db' by default
- *     ]
- * ]
- * </code>
+
  * 
  * @category   DataStores
  * @package    DataStores

@@ -29,8 +29,9 @@ return [
             'zaboy\res\DataStores\Factory\DbTableStoresAbstractFactory',
             'zaboy\res\DataStores\Factory\MemoryStoresAbstractFactory' ,
             'zaboy\res\DataStores\Factory\HttpClientStoresAbstractFactory',            
-            'zaboy\res\Middlewares\Factory\MiddlewareStoreAbstractFactory'
-
+            'zaboy\res\Middlewares\Factory\MiddlewareStoreAbstractFactory',
+            'zaboy\res\TableGateway\Factory\TableGatewayAbstractFactory',
+            'Zend\Db\Adapter\AdapterAbstractServiceFactory'
         ]    
     ]
 ];
