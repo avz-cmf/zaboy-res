@@ -13,6 +13,7 @@ use zaboy\res\DataStores\Read\ReadInterface;
 /**
  * Outer iterator for zaboy\res\DataStores\Read\ReadInterface objects
  * 
+ * @todo rewrite Next with query()
  * @category   DataStores
  * @package    DataStores
  */

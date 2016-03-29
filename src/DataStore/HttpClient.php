@@ -61,12 +61,12 @@ class HttpClient extends DataStoresAbstract
     public function __construct($url, $options = null, ConditionBuilderAbstract $conditionBuilder = null)
     {
         parent::__construct($options);
+        $this->url = rtrim(trim($url),'/');        
         if (is_array($options)) {
             if (isset($options['login']) && isset($options['password'])) {
                 $this->login = $options['login'];
                 $this->password = $options['password'];
             }
-            $this->url = rtrim(trim($url),'/');
             $supportedKeys = [
                 'maxredirects',
                 'useragent',

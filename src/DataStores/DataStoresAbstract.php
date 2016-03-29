@@ -23,6 +23,7 @@ use Xiag\Rql\Parser\Node\Query\LogicOperator;
 /**
  * Abstract class for DataStores
  * 
+ * @todo make support null in eq(fildname, null) and ne(fildname, null)
  * @todo JsonSerializable https://github.com/zendframework/zend-diactoros/blob/master/doc/book/custom-responses.md#json-responses
  * @todo Adapter paras to config for tests
  * @todo Excel client

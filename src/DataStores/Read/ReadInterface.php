@@ -11,6 +11,7 @@ namespace zaboy\res\DataStores\Read;
 /**
  * Read Interface for DataStores
  * 
+ * @todo add query() to interface
  * @category   DataStores
  * @package    DataStores
  * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete 

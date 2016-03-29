@@ -119,12 +119,14 @@ abstract class ConditionBuilderAbstract
     public function  makeScalarOperator(AbstractScalarOperatorNode  $node) 
     {
         $nodeName = $node->getNodeName();
-        $strQuery = 
-                $this->literals['ScalarOperator'][$nodeName]['before'] 
-                . $this->prepareFildName($node->getField()) 
-                . $this->literals['ScalarOperator'][$nodeName]['between']  
-                . $this->prepareFildValue($node->getValue()) 
-                . $this->literals['ScalarOperator'][$nodeName]['after']  ;
+        $value = $node->getValue() instanceof \DateTime ? $node->getValue()->format("Y-m-d") : $node->getValue();       
+        $strQuery =
+            $this->literals['ScalarOperator'][$nodeName]['before']
+            . $this->prepareFildName($node->getField())
+            . $this->literals['ScalarOperator'][$nodeName]['between']
+            . $this->prepareFildValue($value) 
+            . $this->literals['ScalarOperator'][$nodeName]['after'];
+                
         return $strQuery;
     }
 

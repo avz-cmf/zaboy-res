@@ -24,13 +24,12 @@ use zaboy\res\DataStore\Memory;
  */
 class MiddlewareMemoryStore extends StoreMiddlewareAbstract
 {
-    public function __construct(Memory $dataStore =null)
+    public function __construct(Memory $dataStore = null)
     {
-        if ($dataStore !== null) {
-            $this->dataStore = $dataStore;            
-        }else{
-            $this->dataStore = new Memory();
+        if (empty($dataStore)) {
+            $dataStore = new Memory();
         }
+        parent::__construct($dataStore);
     }
     
     /**
