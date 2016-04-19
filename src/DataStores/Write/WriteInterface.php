@@ -21,7 +21,7 @@ interface WriteInterface
      * By default, insert new (by create) Item. 
      * 
      * It can't overwrite existing item by default. 
-     * You can get item "id" for creatad item us result this function.
+     * You can get creatad item us result this function.
      * 
      * If  $item["id"] !== null, item set with that id. 
      * If item with same id already exist - method will throw exception, 
@@ -31,7 +31,7 @@ interface WriteInterface
      * item will be insert with autoincrement PrimryKey.<br>
      * 
      * @param array $itemData associated array with or without PrimaryKey
-     * @return int|string|null  "id" for creatad item or null if item wasn't created
+     * @return array created item or method will throw exception 
      */
     public function create($itemData, $rewriteIfExist = false);
     

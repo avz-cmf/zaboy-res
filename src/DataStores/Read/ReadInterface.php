@@ -76,47 +76,32 @@ interface ReadInterface extends \Countable
      * @return bool
      */
     public function has($id);   
-    
-    /**
-     * 
-     * @return array array of keys or empty array
-     */
-    public function  getKeys();        
-    
+       
     /**
      * Return items by criteria with mapping, sorting and paging
      * 
      * Example:
      * <code>
-     * find(
-     *    array('fild2' => 2, 'fild5' => 'something'), // 'fild2' === 2 && 'fild5 === 'something' 
-     *    array(self::DEF_ID), // return only identifiers
-     *    array(self::DEF_ID => self::DESC),  // Sorting in reverse order by 'id" fild
-     *    10, // not more then 10 items
-     *    5 // from 6th items in result set (offset of the first item is 0)
-     * ) 
+     *  $query = new \Xiag\Rql\Parser\Query();
+     *  $eqNode = new \Xiag\Rql\Parser\Node\ScalarOperator\EqNode(
+     *      'fString', 'val2'
+     *  );
+     *  $query->setQuery($eqNode);            
+     *  $sortNode = new \Xiag\Rql\Parser\Node\Node\SortNode(['id' => '1']);
+     *  $query->setSort($sortNode);  
+     *  $selectNode = new \Xiag\Rql\Parser\Node\Node\SelectNode(['fFloat']);
+     *  $query->setSelect($selectNode);  
+     *  $limitNode = new \Xiag\Rql\Parser\Node\Node\LimitNode(2, 1);
+     *  $query->setLimit($limitNode);
+     *  $queryArray = $this->object->query($query); 
      * </code>
+     * 
      * 
      * ORDER
      * http://www.simplecoding.org/sortirovka-v-mysql-neskolko-redko-ispolzuemyx-vozmozhnostej.html
      * http://ru.php.net/manual/ru/function.usort.php
      * 
-     * @see ASC
-     * @see DESC
-     * @param Array|null $where   
-     * @param array|null $filds What filds will be included in result set. All by default 
-     * @param array|null $order
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array    Empty array or array of arrays
+     * @param Query $query
      */
-    public function find(
-        $where = null,             
-        $filds = null, 
-        $order = null,            
-        $limit = null, 
-        $offset = null 
-    );
-    
     public function query(Query $query); 
 }

@@ -74,109 +74,12 @@ class DbTable extends DataStoresAbstract
             return null;
         }        
     }
-
-    /**
-     * 
-     * @return array array of keys or empty array
-     */
-    public function  getKeys() 
-    {
-        $identifier = $this->getIdentifier();
-        $select = $this->_dbTable->getSql()->select();
-        $select->columns(array($identifier));
-        $rowset = $this->_dbTable->selectWith($select);
-        $keysArrays = $rowset->toArray();
-        if(PHP_VERSION_ID >= 50500) {
-            $keys = array_column($keysArrays, $identifier);
-        }else{
-            $keys = array();
-            foreach ($keysArrays as $key => $value) {
-                $keys[] = $value[$identifier];
-            }
-        }
-        return $keys;
-    }
-    
-    /**
-     * Return items by criteria with mapping, sorting and paging
-     * 
-     * Example:
-     * <code>
-     * find(
-     *    array('fild2' => 2, 'fild5' => 'something'), // 'fild2' === 2 && 'fild5 === 'something' 
-     *    array(self::DEF_ID), // return only identifiers
-     *    array(self::DEF_ID => self::DESC),  // Sorting in reverse order by 'id" fild
-     *    10, // not more then 10 items
-     *    5 // from 6th items in result set (offset of the first item is 0)
-     * ) 
-     * </code>
-     * 
-     * ORDER
-     * http://www.simplecoding.org/sortirovka-v-mysql-neskolko-redko-ispolzuemyx-vozmozhnostej.html
-     * http://ru.php.net/manual/ru/function.usort.php
-     * 
-     * @see ASC
-     * @see DESC
-     * @param Array|null $where   
-     * @param array|null $filds What filds will be included in result set. All by default 
-     * @param array|null $order
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array    Empty array or array of arrays
-     */
-    public function find(
-        $where = null,             
-        $filds = null, 
-        $order = null,            
-        $limit = null, 
-        $offset = null 
-    ) {
-        $select = $this->_dbTable->getSql()->select();
-        
-        // ***********************   where   *********************** 
-        if (!empty($where)) {
-            $select->where($where);
-        }    
-
-        // ***********************   order   *********************** 
-        if (!empty($order)) {
-            foreach ($order as $ordKey => $ordVal) {
-                if ((int)$ordVal === self::SORT_DESC) {
-                    $select->order($ordKey . ' ' . self::DESC);
-                }elseIf ((int)$ordVal === self::SORT_ASC) {
-                    $select->order($ordKey . ' ' . self::ASC);
-                }else{
-                    throw new DataStoresException('Invalid condition: ' . $ordVal);    
-                } 
-            }
-        }else{
-            $select->order($this->getIdentifier() . ' ' . self::ASC);
-        }
-        
-        // *********************  limit, offset   *********************** 
-        if (isset($limit)) { 
-            $select->limit($limit);
-        }    
-        if (isset($offset)) { 
-            $select->offset($offset);
-        }            
-        
-        // *********************  filds  *********************** 
-        if (!empty($filds)) {
-            $select->columns($filds);
-        }            
-
-        // ***********************   return   *********************** 
-        $rowset = $this->_dbTable->selectWith($select);
-        return $rowset->toArray();
-    } 
-    
   
     /**
      * By default, insert new (by create) Item. 
      * 
      * It can't overwrite existing item by default. 
-     * You can get item "id" for creatad item us result this function.
+     * You can get creatad item us result this function.
      * 
      * If  $item["id"] !== null, item set with that id. 
      * If item with same id already exist - method will throw exception, 
@@ -186,9 +89,10 @@ class DbTable extends DataStoresAbstract
      * item will be insert with autoincrement PrimryKey.<br>
      * 
      * @param array $itemData associated array with or without PrimaryKey
-     * @return int|string|null  "id" for creatad item
+     * @return array created item or method will throw exception 
      */
     public function create($itemData, $rewriteIfExist = false) {
+
         $identifier = $this->getIdentifier();
         $adapter = $this->_dbTable->getAdapter();
         // begin Transaction
@@ -196,6 +100,7 @@ class DbTable extends DataStoresAbstract
         try {
             if (isset($itemData[$identifier]) && $rewriteIfExist) {
                 $errorMsg = 'Cann\'t delete item with "id" = ' . $itemData[$identifier];
+             
                 $this->_dbTable->delete(array($identifier => $itemData[$identifier]));
             }
             $errorMsg = 'Cann\'t insert item';
@@ -209,7 +114,8 @@ class DbTable extends DataStoresAbstract
         }
         
         $id = $this->_dbTable->getLastInsertValue();
-        return $id;
+        $newItem = array_merge(array($identifier => $id), $itemData);
+        return $newItem;
     }
 
     /**
@@ -345,5 +251,27 @@ class DbTable extends DataStoresAbstract
 
         $rowset = $this->_dbTable->selectWith($selectSQL);
         return $rowset->toArray();
+    }
+    
+    /**
+     * 
+     * @return array array of keys or empty array
+     */
+    protected function  getKeys() 
+    {
+        $identifier = $this->getIdentifier();
+        $select = $this->_dbTable->getSql()->select();
+        $select->columns(array($identifier));
+        $rowset = $this->_dbTable->selectWith($select);
+        $keysArrays = $rowset->toArray();
+        if(PHP_VERSION_ID >= 50500) {
+            $keys = array_column($keysArrays, $identifier);
+        }else{
+            $keys = array();
+            foreach ($keysArrays as $key => $value) {
+                $keys[] = $value[$identifier];
+            }
+        }
+        return $keys;
     }
 }    

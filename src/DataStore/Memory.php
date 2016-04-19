@@ -63,133 +63,12 @@ class Memory extends DataStoresAbstract
         }
         
     }
-
-    /**
-     * 
-     * @return array array of keys or empty array
-     */
-    public function  getKeys() 
-    {
-        return array_keys($this->_items);
-    } 
-    
-    /**
-     * Return items by criteria with mapping, sorting and paging
-     * 
-     * Example:
-     * <code>
-     * find(
-     *    array('fild2' => 2, 'fild5' => 'something'), // 'fild2' === 2 && 'fild5 === 'something' 
-     *    array(self::DEF_ID), // return only identifiers
-     *    array(self::DEF_ID => self::DESC),  // Sorting in reverse order by 'id" fild
-     *    10, // not more then 10 items
-     *    5 // from 6th items in result set (offset of the first item is 0)
-     * ) 
-     * </code>
-     * 
-     * ORDER
-     * http://www.simplecoding.org/sortirovka-v-mysql-neskolko-redko-ispolzuemyx-vozmozhnostej.html
-     * http://ru.php.net/manual/ru/function.usort.php
-     * 
-     * @see ASC
-     * @see DESC
-     * @param Array|null $where   
-     * @param array|null $filds What filds will be included in result set. All by default 
-     * @param array|null $order
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array    Empty array or array of arrays
-     */
-    public function find(
-        $where = null,             
-        $filds = null, 
-        $order = null,            
-        $limit = null, 
-        $offset = null 
-    ) {
-        $resultArray = array();
-        //*********************** $where ***********************
-        if ( isset($where) ) {
-        $whereBody = "";
-            foreach ($where as $fild => $value) {
-                if('null'=== strtolower($value )){
-                    $whereCheck = "!isset(\$item['$fild'])";
-                }elseif('not_null'=== strtolower($value )){
-                    $whereCheck = "isset(\$item['$fild'])";
-                }else{
-                    $whereCheck = 
-                        "isset(\$item['$fild']) && "
-                        . "\$item['$fild'] == '$value'"
-                    ;                
-                }
-                $whereBody = 
-                     $whereBody . '&& ' 
-                    . '( ' .  $whereCheck . ' )' . PHP_EOL
-                ;
-            }
-            $whereFunctionBody = PHP_EOL  .
-                '$result = ' . PHP_EOL 
-                . substr($whereBody, 2) . ';' . PHP_EOL 
-                . 'return $result;'
-            ;
-            
-            $whereFunction = create_function('$item', $whereFunctionBody);
-            
-            foreach ($this->_items as $item) {
-                if($whereFunction($item)) {
-                    $resultArray[] = $item;
-                }
-            }
-        }else{
-            $resultArray = $this->_items;
-        }
-        
-        // ***********************   order   ***********************        
-        if (!empty($order)) {
-            $nextCompareLevel ='';
-            foreach ($order as $ordKey => $ordVal) {
-                if( (int)$ordVal === self::SORT_ASC){
-                    $cond = '>'; $notCond = '<';
-                }elseIf( (int)$ordVal === self::SORT_DESC){
-                    $cond = '<'; $notCond = '>';
-                }else{
-                    throw new DataStoresException('Invalid condition: ' . $ordVal);    
-                }    
-                $prevCompareLevel = 
-                    "if (\$a['$ordKey'] $cond \$b['$ordKey']) {return 1;};" . PHP_EOL 
-                    . "if (\$a['$ordKey'] $notCond  \$b['$ordKey']) {return -1;};" . PHP_EOL
-                ;
-                $nextCompareLevel =$nextCompareLevel . $prevCompareLevel;                 
-            }
-            $sortFunctionBody = $nextCompareLevel . 'return 0;';
-            $sortFunction = create_function('$a,$b', $sortFunctionBody);
-            usort($resultArray, $sortFunction);
-        }
-        
-        // *********************  limit, offset   *********************** 
-        if ( isset($limit) || isset($offset) ) {
-            $resultArrayTemp = $resultArray;
-            if ( isset($limit) && isset($offset) ) { 
-                $resultArray = array_slice ($resultArrayTemp, $offset, $limit);
-            }elseif(isset($limit)){
-                $resultArray = array_slice ($resultArrayTemp, 0, $limit);
-            }else{
-                $resultArray = array_slice ($resultArrayTemp, $offset);
-            }   
-        }
-
-        // *********************  $filds   ***********************
-        $resultArray = $this->selectFilds($resultArray, $filds);
-        
-        // ***********************   return   *********************** 
-        return $resultArray;
-    } 
     
     /**
      * By default, insert new (by create) Item. 
      * 
      * It can't overwrite existing item by default. 
-     * You can get item "id" for creatad item us result this function.
+     * You can get creatad item us result this function.
      * 
      * If  $item["id"] !== null, item set with that id. 
      * If item with same id already exist - method will throw exception, 
@@ -199,7 +78,7 @@ class Memory extends DataStoresAbstract
      * item will be insert with autoincrement PrimryKey.<br>
      * 
      * @param array $itemData associated array with or without PrimaryKey
-     * @return mix  "id" for creatad item
+     * @return array created item or method will throw exception 
      */
     public function create($itemData, $rewriteIfExist = false) {
         $identifier = $this->getIdentifier();
@@ -207,7 +86,6 @@ class Memory extends DataStoresAbstract
             $this->_items[] = $itemData;
             $itemsKeys = array_keys($this->_items);
             $id = array_pop($itemsKeys);
-            $this->_items[$id] = array_merge(array($identifier => $id), $itemData);
         }elseif(!$rewriteIfExist && isset($this->_items[$itemData[$identifier]])) {
             throw new DataStoresException('Item is already exist with "id" =  ' . $itemData[$identifier]);  
         }else{
@@ -215,7 +93,8 @@ class Memory extends DataStoresAbstract
             $this->_checkIdentifierType($id);
             $this->_items[$id] = array_merge(array($identifier => $id), $itemData);            
         }
-        return $id;
+        $this->_items[$id] = array_merge(array($identifier => $id), $itemData);
+        return $this->_items[$id];
     }
 
     /**
@@ -295,7 +174,6 @@ class Memory extends DataStoresAbstract
         return count($this->_items);
     }
     
-    
     /**
      * Iterator for Interface IteratorAggregate 
      * 
@@ -305,4 +183,13 @@ class Memory extends DataStoresAbstract
     public function getIterator() {
         return new \ArrayIterator($this->_items);
     }
+
+    /**
+     * 
+     * @return array array of keys or empty array
+     */
+    protected function  getKeys() 
+    {
+        return array_keys($this->_items);
+    } 
 }

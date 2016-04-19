@@ -118,233 +118,17 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($this->object->has(2));
         $this->assertFalse($this->object->has(20));        
     } 
-   
-    public function testGetKeys_4()
-    {
-        $this->_initObject();         
-        $keys = $this->object->GetKeys();
-        $this->assertEquals(
-                array(1,2,3,4),
-                $keys
-        );  
-    } 
-
-    public function testGetKeys_0()
-    {
-        $this->_initObject();         
-        $this->object->deleteAll();
-        $keys = $this->object->GetKeys();
-        $this->assertEquals(
-                array(),
-                $keys
-        );  
-    } 
-
-    public function testFind_all()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find();        
-        for ($index = 0; $index < count($this->_itemsArrayDelault); $index++) {
-            $this->assertEquals(
-                    array_pop($this->_itemsArrayDelault),
-                    array_pop($findArray)
-            );               
-        } 
-    }    
-
-    public function testFind_orderId()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find(null, null, array('id'=>DataStoresAbstract::SORT_ASC));        
-        for ($index = 0; $index < count($this->_itemsArrayDelault); $index++) {
-            $this->assertEquals(
-                    array_pop($this->_itemsArrayDelault),
-                    array_pop($findArray)
-            );               
-        } 
-    }
-
-    public function testFind_orderAnotherId()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find(null, null, array('anotherId'=>DataStoresAbstract::SORT_ASC));        
-            $this->assertEquals(
-                    array_pop($this->_itemsArrayDelault),
-                    $findArray[3-1]
-            );        
-            $this->assertEquals(
-                    array_pop($this->_itemsArrayDelault),
-                    $findArray[4-1]
-            );    
-    }    
-
-    public function testFind_orderDesc()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find(null, null, array('id'=>DataStoresAbstract::SORT_DESC));        
-        $this->assertEquals(
-                $this->_itemsArrayDelault[1-1] ,
-                $findArray[4-1]
-        );     
-        $this->assertEquals(
-                $this->_itemsArrayDelault[2-1] ,
-                $findArray[3-1]
-        );   
-    }   
-
-    public function testFind_orderCombo()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find(null, null, array('fString'=>DataStoresAbstract::SORT_DESC, 'fFloat'=>DataStoresAbstract::SORT_ASC, 'anotherId'=>DataStoresAbstract::SORT_DESC));        
-        $this->assertEquals(
-                $this->_itemsArrayDelault[4-1] ,
-                $findArray[1-1]
-        );     
-        $this->assertEquals(
-                $this->_itemsArrayDelault[3-1] ,
-                $findArray[2-1]
-        );
-        $this->assertEquals(
-                $this->_itemsArrayDelault[1-1] ,
-                $findArray[4-1]
-        );   
-    }    
-
-    public function testFind_WhereId()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find(array('id'=> 2));        
-        $this->assertEquals(
-                $this->_itemsArrayDelault[2-1] ,
-                $findArray[1-1]
-        );     
-        $this->assertEquals(
-                1,
-                count($findArray)
-        );
-    } 
-
-    public function testFind_WhereCombo()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find(
-                array('fString'=> 'val2', 'fFloat' => 300.003),
-                null, null
-                //array('id'=>DataStoresAbstract::SORT_ASC)
-         );        
-        $this->assertEquals(
-                $this->_itemsArrayDelault[2-1] ,
-                $findArray[1-1]
-        );     
-        $this->assertEquals(
-                2,
-                count($findArray)
-        );
-    }  
-
-    public function testFind_fildsCombo()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find(
-                array('fString'=> 'val2', 'fFloat' => 300.003),
-                array('fFloat'),
-                array('id'=>DataStoresAbstract::SORT_ASC)
-         );        
-        $this->assertEquals(
-                array('fFloat' => $this->_itemsArrayDelault[2-1]['fFloat']) ,
-                $findArray[1-1]
-        );     
-        $this->assertEquals(
-                2,
-                count($findArray)
-        );
-    }  
-
-    public function testFind_limitCombo()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find(
-                array('fString'=> 'val2', 'fFloat' => 300.003),
-                array('fFloat'),
-                array('id'=>DataStoresAbstract::SORT_ASC),
-                1
-         );        
-        $this->assertEquals(
-                array('fFloat' => $this->_itemsArrayDelault[2-1]['fFloat']) ,
-                $findArray[1-1]
-        );     
-        $this->assertEquals(
-                1,
-                count($findArray)
-        );
-    }  
-
-    public function testFind_offsetCombo()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find(
-                array('fString'=> 'val2', 'fFloat' => 300.003),
-                array('fFloat'),
-                array('id'=>DataStoresAbstract::SORT_ASC),
-                null,
-                1
-         );        
-        $this->assertEquals(
-                array('fFloat' => $this->_itemsArrayDelault[3-1]['fFloat']) ,
-                $findArray[1-1]
-        );     
-        $this->assertEquals(
-                1,
-                count($findArray)
-        );
-    } 
-
-    public function testFind_limitOffsetCombo()
-    {
-        $this->_initObject();
-        $findArray = $this->object->find(
-                array('fString'=> 'val2'),
-                array('fFloat'),
-                array('id'=>DataStoresAbstract::SORT_ASC),
-                2,
-                1
-         );        
-        $this->assertEquals(
-                array('fFloat' => $this->_itemsArrayDelault[3-1]['fFloat']) ,
-                $findArray[1-1]
-        );  
-        $this->assertEquals(
-                array('fFloat' => $this->_itemsArrayDelault[4-1]['fFloat']) ,
-                $findArray[2-1]
-        ); 
-        $this->assertEquals(
-                2,
-                count($findArray)
-        );
-    } 
-
-    public function testFind_Enhanced()
-    {
-        $this->_initObject($this->_itemsArrayEnhanced);
-        $findArray = $this->object->find(
-                //array('abs'=> 'val_abs')
-                array('id'=> 2)        
-         );
-        $this->assertEquals(
-                1,
-                count($findArray)
-        );
-    }         
 
     public function testCreate_withoutId()
     {
         $this->_initObject();
-        $id = $this->object->create(
+        $newItem = $this->object->create(
             array(
                 'fFloat' => 1000.01,
                 'fString'=> 'Create_withoutId_'
             )
         );
+        $id = $newItem['id'];
         $insertedItem = $this->object->read($id);
         $this->assertEquals(
                 'Create_withoutId_',
@@ -359,13 +143,14 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
     public function testCreate_withtId()
     {
         $this->_initObject();
-        $id = $this->object->create(
+        $newItem = $this->object->create(
             array(
                 'id' => 1000,
                 'fFloat' => 1000.01,
                 'fString'=> 'Create_withId'
             )
         );
+        $id = $newItem['id'];
         $insertedItem = $this->object->read($id);
         $this->assertEquals(
                 'Create_withId',
@@ -380,13 +165,14 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
     public function testCreate_withtIdRewrite()
     {
         $this->_initObject();
-        $id = $this->object->create(
+        $newItem = $this->object->create(
             array(
                 'id' => 2,
                 'fString'=> 'Create_withtIdRewrite'
             ),
             true    
         );
+        $id = $newItem['id'];
         $insertedItem = $this->object->read($id);
         $this->assertEquals(
                 'Create_withtIdRewrite',
@@ -656,6 +442,19 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
 
     }    
     
+    public function testQuery_Empty()
+    {
+        $this->_initObject();
+        $query = new Query();
+        $eqNode = new ScalarOperator\EqNode(
+            'fString', 'not_exist_value'
+        );
+        $query->setQuery($eqNode);
+        $this->assertEquals(
+            [],
+            $this->object->query($query)
+        ); 
+    }        
 
     public function testQuery_all()
     {
@@ -950,7 +749,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
             array ('dl1?'),
             array ('*vol1? '),
      );    
-    }        
+    }   
     /**
     * @dataProvider provider_Query_Where_Like_False
     */
@@ -968,4 +767,5 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase {
                 count($queryArray)
         );
     } 
+
 }
