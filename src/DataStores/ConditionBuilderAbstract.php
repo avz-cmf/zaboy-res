@@ -13,7 +13,7 @@ use Xiag\Rql\Parser\Node\AbstractQueryNode;
 use Xiag\Rql\Parser\Node\Query\AbstractLogicOperatorNode;
 use Xiag\Rql\Parser\Node\Query\AbstractArrayOperatorNode;
 use Xiag\Rql\Parser\Node\Query\AbstractScalarOperatorNode;
-use Zend\Db\Adapter\AdapterInterface;
+use Xiag\Rql\Parser\DataType\Glob;
 
 /**
  * 
@@ -48,7 +48,7 @@ abstract class ConditionBuilderAbstract
      */
     public function __construct()
     {
-        foreach ($this->literals as $operatorType => $operatorsNames) {
+        foreach ($this->literals as $operatorsNames) {
             foreach ($operatorsNames as $operatorName => $placeHolders) {
                 $this->supportedQueryNodeNames[] = $operatorName;                
             }
@@ -63,9 +63,24 @@ abstract class ConditionBuilderAbstract
     
     public function prepareFildValue($fildValue) 
     {
-        return $fildValue;
+        if (is_a($fildValue, 'Xiag\Rql\Parser\DataType\Glob', true)) {
+            return $this->getValueFromGlob($fildValue);
+        }else{
+            return $fildValue;    
+        }
+        
     }
-
+    
+    public function getValueFromGlob(Glob $globNode) 
+    {
+        $reflection = new \ReflectionClass($globNode);
+        $globProperty = $reflection->getProperty('glob');
+        $globProperty->setAccessible(true);
+        $glob = $globProperty->getValue($globNode);
+        $globProperty->setAccessible(false);
+        return $glob;
+    }
+    
     /**
      */
     public function __invoke(AbstractQueryNode $rootQueryNode = null) 
@@ -126,7 +141,6 @@ abstract class ConditionBuilderAbstract
             . $this->literals['ScalarOperator'][$nodeName]['between']
             . $this->prepareFildValue($value) 
             . $this->literals['ScalarOperator'][$nodeName]['after'];
-                
         return $strQuery;
     }
 

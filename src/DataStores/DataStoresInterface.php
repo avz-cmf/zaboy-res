@@ -20,7 +20,7 @@ use zaboy\res\DataStores\Write\WriteInterface;
  * @package    DataStores
  * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete 
  */
-interface DataStoresInterface extends ReadInterface, WriteInterface, IteratorAggregate, Countable
+interface DataStoresInterface extends ReadInterface, WriteInterface, IteratorAggregate
 {    
  
 }

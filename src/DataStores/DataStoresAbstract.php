@@ -298,10 +298,7 @@ abstract class DataStoresAbstract implements DataStoresInterface
         }
     }
     
-    /**
-     * @see IteratorAggregate
-     * @return Traversable 
-     */
+
     public function query(Query $query) 
     {
         $limits = $query->getLimit();
@@ -397,7 +394,11 @@ abstract class DataStoresAbstract implements DataStoresInterface
         return $result;
     }
     
-    abstract protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null);
+    protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
+    {
+        $conditionBuilder = $this->_conditionBuilder;
+        return $conditionBuilder($queryNode);
+    }  
    
     
     protected function getQueryWhereFunction($conditioon)
@@ -407,7 +408,6 @@ abstract class DataStoresAbstract implements DataStoresInterface
             . rtrim($conditioon, PHP_EOL) . ';' . PHP_EOL 
             . 'return $result;'
         ;
-        var_dump('Astruct where -------->' . $whereFunctionBody);
         $whereFunction = create_function('$item', $whereFunctionBody);
         return $whereFunction;
     }

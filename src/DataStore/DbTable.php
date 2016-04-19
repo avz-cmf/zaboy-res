@@ -321,9 +321,6 @@ class DbTable extends DataStoresAbstract
         // ***********************   where   *********************** 
         $where = $this->getQueryWhereConditioon($query->getQuery());
         $selectSQL->where($where);
-var_dump('db-----/.' );  
-var_dump($where);
-      
         // ***********************   order   *********************** 
         foreach ($sortFilds as $ordKey => $ordVal) {
             if ((int) $ordVal === self::SORT_DESC) {
@@ -349,11 +346,4 @@ var_dump($where);
         $rowset = $this->_dbTable->selectWith($selectSQL);
         return $rowset->toArray();
     }
-    
-    protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
-    {
-        $conditionBuilder = $this->_conditionBuilder;
-        return $conditionBuilder($queryNode);
-    }    
-    
 }    

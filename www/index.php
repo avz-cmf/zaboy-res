@@ -50,7 +50,10 @@ $row = $results->current();
 $name = $row['notes'];
 
 */
-        $object = $container->get('testHttpClient');    
+
+$memory = $container->get('testMemory');     
+var_dump($memory);
+
 
 $app    = new MiddlewarePipe();
 

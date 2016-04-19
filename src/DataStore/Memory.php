@@ -295,9 +295,14 @@ class Memory extends DataStoresAbstract
         return count($this->_items);
     }
     
-    protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
-    {
-        $conditionBuilder = $this->_conditionBuilder;
-        return $conditionBuilder($queryNode);
-    }    
+    
+    /**
+     * Iterator for Interface IteratorAggregate 
+     * 
+     * @see IteratorAggregate
+     * @return Traversable 
+     */
+    public function getIterator() {
+        return new \ArrayIterator($this->_items);
+    }
 }

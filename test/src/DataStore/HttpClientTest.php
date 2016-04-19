@@ -54,7 +54,7 @@ class HttpClientTest extends AbstractTest {
         $quoteTableName = $this->adapter->platform->quoteIdentifier($this->dbTableName) ;
         $deleteStatementStr = "DROP TABLE IF EXISTS " .  $quoteTableName;
         $deleteStatement = $this->adapter->query($deleteStatementStr);
-        $deleteStatement->execute();
+        //$deleteStatement->execute();
         
     }
 

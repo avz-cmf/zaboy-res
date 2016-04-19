@@ -9,7 +9,7 @@ return [
         'testHttpClient' => [
             'class' =>'zaboy\res\DataStore\HttpClient',
             'tableName' => 'test_res_http',
-            'url' => 'http://__zaboy-rest/api/rest/test_res_http',
+            'url' => 'http://zaboy-rest.loc/api/rest/test_res_http',
             'options' => ['timeout' => 30]
             ],   
         'testMemory' => [

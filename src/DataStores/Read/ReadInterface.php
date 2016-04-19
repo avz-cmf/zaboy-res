@@ -8,6 +8,7 @@
 
 namespace zaboy\res\DataStores\Read;
 
+use Xiag\Rql\Parser\Query;
 /**
  * Read Interface for DataStores
  * 
@@ -16,7 +17,7 @@ namespace zaboy\res\DataStores\Read;
  * @package    DataStores
  * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete 
  */
-interface ReadInterface
+interface ReadInterface extends \Countable
 {    
 
     /**
@@ -116,5 +117,6 @@ interface ReadInterface
         $limit = null, 
         $offset = null 
     );
-
+    
+    public function query(Query $query); 
 }

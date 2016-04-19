@@ -9,6 +9,9 @@
 namespace zaboy\res\DataStores\Read;
 
 use zaboy\res\DataStores\Read\ReadInterface;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator;
+use Xiag\Rql\Parser\Query;
+use Xiag\Rql\Parser\Node;
 
 /**
  * Outer iterator for zaboy\res\DataStores\Read\ReadInterface objects
@@ -26,13 +29,6 @@ class DataStoreIterator implements \iterator
      * @var mix $index
      */   
     protected $index = null;   
-    
-    /**
-     * array with keys, wich was iteratad in this cycle
-     * 
-     * @var array $usedKeys
-     */   
-    protected $usedKeys= array();   
     
     /**
      * @var ReadInterface $dataStores
@@ -54,19 +50,17 @@ class DataStoreIterator implements \iterator
      */
     public function rewind()
     {
-  
-        $this->usedKeys = array();
-        $keys = $this->dataStore->getKeys();
-        if (empty($keys)) {
-            $this->index =  null;
-            return null;
-        }else{
-            asort($keys);
-            $this->index =  array_shift($keys);
-            $this->usedKeys[] = $this->index; 
-            return $this->index;
-        }
-
+        $identifier = $this->dataStore->getIdentifier();
+        $query = new Query();
+        $selectNode = new Node\SelectNode([$identifier]);            
+        $query->setSelect($selectNode);
+        $sortNode = new Node\SortNode([$identifier => 1]);
+        $query->setSort($sortNode);  
+        $limitNode = new Node\LimitNode(1, 0);
+        $query->setLimit($limitNode);
+        $queryArray = $this->dataStore->query($query);
+        $this->index = $queryArray[0][$identifier];
+        $this->index = $queryArray === [] ? null : $queryArray[0][$identifier];
     }
 
     /**
@@ -75,11 +69,8 @@ class DataStoreIterator implements \iterator
      */
     public function current()
     {
-        if (isset($this->index) && ($this->dataStore->read($this->index) !== null)) {
-            return $this->dataStore->read($this->index);
-        }else{
-            return null;
-        } 
+        $result = isset($this->index) ? $this->dataStore->read($this->index) : null;
+        return $result;
     }
 
     /**
@@ -97,23 +88,18 @@ class DataStoreIterator implements \iterator
      */
     public function next()
     {
-        $this->usedKeys[] = $this->index;       
-        $keys = $this->dataStore->getKeys();
-        if ( empty($keys)) {
-            $this->usedKeys = array();
-            return null;
-        }else{
-            asort($keys);
-            foreach ($keys as $id) {
-                if (!in_array($id, $this->usedKeys)) {
-             
-                    $this->index = $id;
-                    return $this->dataStore->read($this->index);
-                }
-            }
-            $this->index = null;
-            return null;
-        }
+        $identifier = $this->dataStore->getIdentifier();
+        $query = new Query();
+        $selectNode = new Node\SelectNode([$identifier]);            
+        $query->setSelect($selectNode);
+        $sortNode = new Node\SortNode([$identifier => 1]);
+        $query->setSort($sortNode);  
+        $limitNode = new Node\LimitNode(1, 0);
+        $query->setLimit($limitNode);
+        $gtNode = new ScalarOperator\GtNode( $identifier, $this->index );
+        $query->setQuery($gtNode);
+        $queryArray = $this->dataStore->query($query);
+        $this->index = $queryArray === [] ? null : $queryArray[0][$identifier];
     }
 
     /**

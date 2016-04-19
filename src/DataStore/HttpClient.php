@@ -215,7 +215,6 @@ class HttpClient extends DataStoresAbstract
 
     public function query(Query $query) 
     {
-var_dump('Http   public function query( -------->');
         $client = $this->initHttpClient(Request::METHOD_GET, $query);
         $response = $client->send();
         if ($response->isOk()) {
@@ -231,12 +230,10 @@ var_dump('Http   public function query( -------->');
     
     public function  rqlEncode(Query $query) 
     {
-var_dump('Http   public function rqlEncode( -------->');
         $rqlQueryString = $this->getQueryWhereConditioon($query->getQuery());
         $rqlQueryString = $this->makeLimit($query, $rqlQueryString);
         $rqlQueryString = $this->makeSort($query, $rqlQueryString);     
         $rqlQueryString = $this->makeSelect($query, $rqlQueryString);  
-var_dump('Astruct where -------->' . $rqlQueryString);
         return ltrim($rqlQueryString,'&');
     }
 
@@ -260,12 +257,12 @@ var_dump('Astruct where -------->' . $rqlQueryString);
         if (empty($sortFilds)) {
             return $rqlQueryString;      
         }else{
-            $strSelect =  'sort(';
+            $strSort =  '';
             foreach ($sortFilds as $key => $value) {
                 $prefix = $value == SortNode::SORT_DESC ? '-' : '+';
-                $strSelect =  $strSelect . $prefix . $key . ',';
+                $strSort =  $strSort . $prefix . $key . ',';
             }
-            $rqlQueryString = $rqlQueryString . rtrim($strSelect, ',') . ')';
+            $rqlQueryString = $rqlQueryString . 'sort(' . rtrim($strSort, ',') . ')';
             return $rqlQueryString;      
         }  
     }
@@ -277,8 +274,11 @@ var_dump('Astruct where -------->' . $rqlQueryString);
         if (empty($selectFilds)) {
             return $rqlQueryString;   
         }else{
-            $rqlQueryString =  $rqlQueryString . '&select(' . implode(',', $selectFilds) . ')';
-            return $rqlQueryString;      
+            $rqlQueryString =  $rqlQueryString . '&select('; 
+            foreach ($selectFilds as $fild) {
+                $rqlQueryString = $rqlQueryString . $fild . ',' ;
+            }
+            return rtrim($rqlQueryString, ',') . ')' ;      
         }  
     }
     
@@ -298,7 +298,6 @@ var_dump('Astruct where -------->' . $rqlQueryString);
             $rqlString = $this->rqlEncode($query);
             $url = $url . '?' . $rqlString;
         }
-var_dump('Http   public function initHttpClient( -------->' . $url);
         $httpClient = new Client($url, $this->options);
         $headers['Content-Type'] =  'application/json';
         $headers['Accept'] =  'application/json';
@@ -317,7 +316,6 @@ var_dump('Http   public function initHttpClient( -------->' . $url);
     {
         // Clear json_last_error()
         json_encode(null);
-
         $result = Json::decode($data, Json::TYPE_ARRAY);//json_decode($data);
         json_encode(null);
         if (JSON_ERROR_NONE !== json_last_error()) {
@@ -356,10 +354,5 @@ var_dump('Http   public function initHttpClient( -------->' . $url);
 
         return $result;
     }
-    
-    protected function getQueryWhereConditioon(AbstractQueryNode $queryNode = null)
-    {
-        $conditionBuilder = $this->_conditionBuilder;
-        return $conditionBuilder($queryNode);
-    }    
+  
 }    
