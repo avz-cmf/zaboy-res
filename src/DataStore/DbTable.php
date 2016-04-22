@@ -1,7 +1,8 @@
 <?php
+
 /**
  * Zaboy lib (http://zaboy.org/lib/)
- * 
+ *
  * @copyright  Zaboychenko Andrey
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
@@ -11,267 +12,248 @@ namespace zaboy\res\DataStore;
 use zaboy\res\DataStores\DataStoresAbstract;
 use zaboy\res\DataStores\DataStoresException;
 use zaboy\res\DataStore\ConditionBuilder\SqlConditionBuilder;
-use zaboy\res\DataStores\ConditionBuilderAbstract;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Xiag\Rql\Parser\Query;
-use Xiag\Rql\Parser\Node\AbstractQueryNode;
+use Xiag\Rql\Parser\Node\SortNode;
 
 /**
  * DataStores as Db Table
- * 
+ *
  * @category   DataStores
  * @package    DataStores
  * @uses zend-db
  * @see https://github.com/zendframework/zend-db
- * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete 
+ * @see http://en.wikipedia.org/wiki/Create,_read,_update_and_delete
  */
 class DbTable extends DataStoresAbstract
-{    
+{
+
     /**
      *
-     * @var \Zend\Db\TableGateway\TableGateway 
+     * @var \Zend\Db\TableGateway\TableGateway
      */
-    
-    protected $_dbTable;
-    
+    protected $dbTable;
+
     /**
-     * 
+     *
      * @param TableGateway $dbTable
-     * @param array $options
      */
-    public function __construct(TableGateway $dbTable, ConditionBuilderAbstract $conditionBuilder = null)
+    public function __construct(TableGateway $dbTable)
     {
-        parent::__construct();
-        $this->_dbTable = $dbTable;
-        if ( isset($conditionBuilder)) {
-            $this->_conditionBuilder = $conditionBuilder;
-        }  else {
-            $db = $dbTable->getAdapter();
-            $this->_conditionBuilder = new SqlConditionBuilder($db);
-        }
-    }        
-            
-            
+        $this->dbTable = $dbTable;
+        $db = $dbTable->getAdapter();
+        $this->conditionBuilder = new SqlConditionBuilder($db);
+    }
+
+//** Interface "zaboy\res\DataStores\Interfaces\ReadInterface" **/
+
     /**
-     * Return Item by id
-     * 
-     * Method return null if item with that id is absent.
-     * Format of Item - Array("id"=>123, "fild1"=value1, ...)
-     * 
-     * @param int|string|float $id PrimaryKey
-     * @return array|null
+     * {@inheritdoc}
+     *
+     * {@inheritdoc}
      */
     public function read($id)
     {
-        $this->_checkIdentifierType($id);
+        $this->checkIdentifierType($id);
         $identifier = $this->getIdentifier();
-        $rowset = $this->_dbTable->select(array($identifier => $id));
-        $row =  $rowset->current();
-        if (isset($row) ) {
-           return $row->getArrayCopy(); 
-        }else{
+        $rowset = $this->dbTable->select(array($identifier => $id));
+        $row = $rowset->current();
+        if (isset($row)) {
+            return $row->getArrayCopy();
+        } else {
             return null;
-        }        
+        }
     }
-  
+
     /**
-     * By default, insert new (by create) Item. 
-     * 
-     * It can't overwrite existing item by default. 
-     * You can get creatad item us result this function.
-     * 
-     * If  $item["id"] !== null, item set with that id. 
-     * If item with same id already exist - method will throw exception, 
-     * but if $rewriteIfExist = true item will be rewrited.<br>
-     * 
-     * If $item["id"] is not set or $item["id"]===null, 
-     * item will be insert with autoincrement PrimryKey.<br>
-     * 
-     * @param array $itemData associated array with or without PrimaryKey
-     * @return array created item or method will throw exception 
+     * {@inheritdoc}
+     *
+     * {@inheritdoc}
      */
-    public function create($itemData, $rewriteIfExist = false) {
+    public function query(Query $query)
+    {
+        $limits = $query->getLimit();
+        $limit = !$limits ? self::LIMIT_INFINITY : $query->getLimit()->getLimit();
+        $offset = !$limits ? 0 : $query->getLimit()->getOffset();
+        $sort = $query->getSort();
+        $sortFilds = !$sort ? [$this->getIdentifier() => SortNode::SORT_ASC] : $sort->getFields();
+        $select = $query->getSelect();  //What filds will return
+        $selectFilds = !$select ? [] : $select->getFields();
+        $selectSQL = $this->dbTable->getSql()->select();
+        // ***********************   where   ***********************
+        $conditionBuilder = $this->conditionBuilder;
+        $where = $conditionBuilder($query->getQuery());
+        $selectSQL->where($where);
+        // ***********************   order   ***********************
+        foreach ($sortFilds as $ordKey => $ordVal) {
+            if ((int) $ordVal === SortNode::SORT_DESC) {
+                $selectSQL->order($ordKey . ' ' . Select::ORDER_DESCENDING);
+            } else {
+                $selectSQL->order($ordKey . ' ' . Select::ORDER_ASCENDING);
+            }
+        }
+        // *********************  limit, offset   ***********************
+        if ($limit <> self::LIMIT_INFINITY) {
+            $selectSQL->limit($limit);
+        }
+        if ($offset <> 0) {
+            $selectSQL->offset($offset);
+        }
+        // *********************  filds  ***********************
+        if (!empty($selectFilds)) {
+
+            $selectSQL->columns($selectFilds);
+        }
+        // ***********************   return   ***********************
+
+        $rowset = $this->dbTable->selectWith($selectSQL);
+        return $rowset->toArray();
+    }
+
+// ** Interface "zaboy\res\DataStores\Interfaces\DataStoresInterface"  **/
+
+    /**
+     * {@inheritdoc}
+     *
+     * {@inheritdoc}
+     */
+    public function create($itemData, $rewriteIfExist = false)
+    {
 
         $identifier = $this->getIdentifier();
-        $adapter = $this->_dbTable->getAdapter();
+        $adapter = $this->dbTable->getAdapter();
         // begin Transaction
+        $errorMsg = 'Can\'t start insert transaction';
         $adapter->getDriver()->getConnection()->beginTransaction();
         try {
             if (isset($itemData[$identifier]) && $rewriteIfExist) {
-                $errorMsg = 'Cann\'t delete item with "id" = ' . $itemData[$identifier];
-             
-                $this->_dbTable->delete(array($identifier => $itemData[$identifier]));
+                $errorMsg = 'Can\'t delete item with "id" = ' . $itemData[$identifier];
+                $this->dbTable->delete(array($identifier => $itemData[$identifier]));
             }
-            $errorMsg = 'Cann\'t insert item';
-            $rows = $this->_dbTable->insert($itemData);
+            $errorMsg = 'Can\'t insert item';
+            $rowsCount = $this->dbTable->insert($itemData);
             $adapter->getDriver()->getConnection()->commit();
-
-        }
-        catch (\Exception $e1) {
+        } catch (\Exception $e) {
             $adapter->getDriver()->getConnection()->rollback();
-            throw new DataStoresException($errorMsg, 0, $e1);
+            throw new DataStoresException($errorMsg, 0, $e);
         }
-        
-        $id = $this->_dbTable->getLastInsertValue();
+
+        $id = $this->dbTable->getLastInsertValue();
         $newItem = array_merge(array($identifier => $id), $itemData);
         return $newItem;
     }
 
     /**
-     * By default, update existing Item.
-     * 
-     * If item with PrimaryKey == $item["id"] is existing in store, item will updete.
-     * Filds wich don't present in $item will not change in item in store.<br>
-     * Method will return updated item<br>
-     * <br>
-     * If $item["id"] isn't set - method will throw exception.<br>
-     * <br>
-     * If item with PrimaryKey == $item["id"] is absent - method  will throw exception,<br>
-     * but if $createIfAbsent = true item will be created and method return inserted item<br>
-     * <br>
-     * 
-     * @param array $itemData associated array with PrimaryKey
-     * @return array updated item or inserted item
+     * {@inheritdoc}
+     *
+     * {@inheritdoc}
      */
-    public function update($itemData, $createIfAbsent = false) {
+    public function update($itemData, $createIfAbsent = false)
+    {
         $identifier = $this->getIdentifier();
         if (!isset($itemData[$identifier])) {
-            throw new DataStoresException( 'Item must has primary key'); 
+            throw new DataStoresException('Item must has primary key');
         }
         $id = $itemData[$identifier];
-        $this->_checkIdentifierType($id);
-        $adapter = $this->_dbTable->getAdapter();
-        $errorMsg = 'Cann\'t update item with "id" = ' . $id; 
-        $queryStr = 'SELECT ' . Select::SQL_STAR 
-            . ' FROM ' . $adapter->platform->quoteIdentifier($this->_dbTable->getTable()) 
-            . ' WHERE ' . $adapter->platform->quoteIdentifier($identifier)  . ' = ?'  
-            . ' FOR UPDATE'; 
+        $this->checkIdentifierType($id);
+        $adapter = $this->dbTable->getAdapter();
+        $errorMsg = 'Can\'t update item with "id" = ' . $id;
+        $queryStr = 'SELECT ' . Select::SQL_STAR
+                . ' FROM ' . $adapter->platform->quoteIdentifier($this->dbTable->getTable())
+                . ' WHERE ' . $adapter->platform->quoteIdentifier($identifier) . ' = ?'
+                . ' FOR UPDATE';
         $adapter->getDriver()->getConnection()->beginTransaction();
         try {
             //is row with this index exist?
             $rowset = $adapter->query($queryStr, array($id));
             $isExist = !is_null($rowset->current());
             switch (true) {
-                 case !$isExist && !$createIfAbsent:
+                case!$isExist && !$createIfAbsent:
                     throw new DataStoresException($errorMsg);
-                case !$isExist && $createIfAbsent:
-                    $this->_dbTable->insert($itemData);
+                case!$isExist && $createIfAbsent:
+                    $this->dbTable->insert($itemData);
                     $result = $itemData;
                     break;
                 case $isExist:
                     unset($itemData[$identifier]);
-                    $this->_dbTable->update($itemData, array('id' => $id));
+                    $this->dbTable->update($itemData, array($identifier => $id));
                     $rowset = $adapter->query($queryStr, array($id));
                     $result = $rowset->current()->getArrayCopy();
                     break;
             }
-            $adapter->getDriver()->getConnection()->commit();            
-        }    
-        catch (\Exception $e) {
+            $adapter->getDriver()->getConnection()->commit();
+        } catch (\Exception $e) {
             $adapter->getDriver()->getConnection()->rollback();
             throw new DataStoresException($errorMsg, 0, $e);
         }
         return $result;
     }
 
-     /**
-      * Delete Item by id. Method do nothing if item with that id is absent.
-      * 
-      * @param int|string $id PrimaryKey
-      * @return int number of deleted items: 0 or 1
-      */
-    public function delete($id) {
+    /**
+     * {@inheritdoc}
+     *
+     * {@inheritdoc}
+     */
+    public function delete($id)
+    {
         $identifier = $this->getIdentifier();
-        $this->_checkIdentifierType($id);       
-        $deletedItemsCount = $this->_dbTable->delete(array($identifier => $id));
-        return $deletedItemsCount;
-    }  
-    
-     /**
-      * Delete all Items.
-      * 
-      * @return int number of deleted items or null if object doesn't support it
-      */
-    public function deleteAll() {
-        $where = '1=1';
-        $deletedItemsCount = $this->_dbTable->delete( $where);
+        $this->checkIdentifierType($id);
+        $deletedItemsCount = $this->dbTable->delete(array($identifier => $id));
         return $deletedItemsCount;
     }
-    
-    
+
     /**
-     * @see coutable
-     * @return int
+     * {@inheritdoc}
+     *
+     * {@inheritdoc}
      */
-    public function count() {
-        $adapter = $this->_dbTable->getAdapter();
+    public function deleteAll()
+    {
+        $where = '1=1';
+        $deletedItemsCount = $this->dbTable->delete($where);
+        return $deletedItemsCount;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * {@inheritdoc}
+     */
+    public function count()
+    {
+        $adapter = $this->dbTable->getAdapter();
         /* @var $rowset Zend\Db\ResultSet\ResultSet */
         $rowset = $adapter->query(
-            'SELECT COUNT(*) AS count FROM ' 
-            . $adapter->platform->quoteIdentifier($this->_dbTable->getTable())
-            , $adapter::QUERY_MODE_EXECUTE);
+                'SELECT COUNT(*) AS count FROM '
+                . $adapter->platform->quoteIdentifier($this->dbTable->getTable())
+                , $adapter::QUERY_MODE_EXECUTE);
         return $rowset->current()['count'];
-    }    
-
-    public function query(Query $query) 
-    {
-        $limits = $query->getLimit();
-        $limit = !$limits ? self::LIMIT_INFINITY : $query->getLimit()->getLimit();
-        $offset =  !$limits ? 0 : $query->getLimit()->getOffset();
-        $sort = $query->getSort();
-        $sortFilds = !$sort ? [$this->getIdentifier()=>self::ASC] : $sort->getFields();
-        $select = $query->getSelect();  //What filds will return
-        $selectFilds = !$select ? [] : $select->getFields();
-        $selectSQL = $this->_dbTable->getSql()->select();
-        // ***********************   where   *********************** 
-        $where = $this->getQueryWhereConditioon($query->getQuery());
-        $selectSQL->where($where);
-        // ***********************   order   *********************** 
-        foreach ($sortFilds as $ordKey => $ordVal) {
-            if ((int) $ordVal === self::SORT_DESC) {
-                $selectSQL->order($ordKey . ' ' . self::DESC);
-            }else{
-                $selectSQL->order($ordKey . ' ' . self::ASC);
-            }
-        }
-        // *********************  limit, offset   *********************** 
-        if ($limit<>self::LIMIT_INFINITY) { 
-            $selectSQL->limit($limit);
-        }    
-        if ($offset<>0) { 
-            $selectSQL->offset($offset);
-        }            
-        // *********************  filds  *********************** 
-        if (!empty($selectFilds)) {
-
-            $selectSQL->columns($selectFilds);
-        }            
-        // ***********************   return   *********************** 
-
-        $rowset = $this->_dbTable->selectWith($selectSQL);
-        return $rowset->toArray();
     }
-    
+
+// ** protected  **/
+
     /**
-     * 
-     * @return array array of keys or empty array
+     * {@inheritdoc}
+     *
+     * {@inheritdoc}
      */
-    protected function  getKeys() 
+    protected function getKeys()
     {
         $identifier = $this->getIdentifier();
-        $select = $this->_dbTable->getSql()->select();
+        $select = $this->dbTable->getSql()->select();
         $select->columns(array($identifier));
-        $rowset = $this->_dbTable->selectWith($select);
+        $rowset = $this->dbTable->selectWith($select);
         $keysArrays = $rowset->toArray();
-        if(PHP_VERSION_ID >= 50500) {
+        if (PHP_VERSION_ID >= 50500) {
             $keys = array_column($keysArrays, $identifier);
-        }else{
+        } else {
             $keys = array();
-            foreach ($keysArrays as $key => $value) {
+            foreach ($keysArrays as $value) {
                 $keys[] = $value[$identifier];
             }
         }
         return $keys;
     }
-}    
+
+}

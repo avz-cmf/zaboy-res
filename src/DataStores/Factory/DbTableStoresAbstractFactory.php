@@ -68,7 +68,7 @@ class DbTableStoresAbstractFactory extends DataStoresAbstractFactoryAbstract
      * @param  Interop\Container\ContainerInterface $container
      * @param  string $requestedName
      * @param  array $options
-     * @return DataStores\DataStoresInterface
+     * @return \DataStores\Interfaces\DataStoresInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null) 
     {

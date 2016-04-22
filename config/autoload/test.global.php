@@ -1,37 +1,37 @@
 <?php
 
-return [ 
+return [
     'dataStore' => [
         'testDbTable' => [
-            'class' =>'zaboy\res\DataStore\DbTable',
+            'class' => 'zaboy\res\DataStore\DbTable',
             'tableName' => 'test_res_tablle'
-            ],
+        ],
         'testHttpClient' => [
-            'class' =>'zaboy\res\DataStore\HttpClient',
+            'class' => 'zaboy\res\DataStore\HttpClient',
             'tableName' => 'test_res_http',
             'url' => 'http://zaboy-rest.loc/api/rest/test_res_http',
             'options' => ['timeout' => 30]
-            ],   
+        ],
         'testMemory' => [
-            'class' =>'zaboy\res\DataStore\Memory',
-            ]
+            'class' => 'zaboy\res\DataStore\Memory',
+        ]
     ],
     'middleware' => [
         'MiddlewareMemoryTest' => [
-          'class' =>'zaboy\res\Middleware\MiddlewareMemoryStore',
-          'dataStore' => 'testMemory'
+            'class' => 'zaboy\res\Middleware\MiddlewareMemoryStore',
+            'dataStore' => 'testMemory'
         ]
-    ],   
+    ],
     'services' => [
         'factories' => [
         ],
         'abstract_factories' => [
             'zaboy\res\DataStores\Factory\DbTableStoresAbstractFactory',
-            'zaboy\res\DataStores\Factory\MemoryStoresAbstractFactory' ,
-            'zaboy\res\DataStores\Factory\HttpClientStoresAbstractFactory',            
+            'zaboy\res\DataStores\Factory\MemoryStoresAbstractFactory',
+            'zaboy\res\DataStores\Factory\HttpClientStoresAbstractFactory',
             'zaboy\res\Middlewares\Factory\MiddlewareStoreAbstractFactory',
             'zaboy\res\TableGateway\Factory\TableGatewayAbstractFactory',
             'Zend\Db\Adapter\AdapterAbstractServiceFactory'
-        ]    
+        ]
     ]
 ];

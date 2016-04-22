@@ -6,9 +6,17 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\res\DataStores\Tree;
+namespace zaboy\res\DataStores\Interfaces;
 
-interface Avz_DataStore_Tree_Read_Interface extends Avz_DataStore_Read_Interface
+use zaboy\res\DataStores\Interfaces\ReadInterface;
+
+/**
+ * TreeRead Interface for DataStores
+ * 
+ * @category   DataStores
+ * @package    DataStores
+ */
+interface TreeReadInterface extends ReadInterface
 {
 
     /**

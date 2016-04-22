@@ -1,0 +1,28 @@
+# Source file or directory to parse
+source: D:\OpenServer\domains\zaboy-res.loc\
+# Directory where to save the generated documentation
+destination: D:\OpenServer\domains\zaboy-res.loc\www\doc\
+# Title of generated documentation
+title: zaboy-res
+# Template config file
+#templateConfig: 'C:\php\pear\data\ApiGen\templates\default\config.neon'
+# Grouping of classes
+groups: auto
+# Element types for search input autocomplete
+#autocomplete: [classes,constants,functions,methods,properties,classconstants]
+exclude: ['vendor\*','www/doc/*']
+charset: [UTF-8]
+# Generate documentation for methods and properties with given access level
+accessLevels: [public, protected, private]
+# Generate documentation for elements marked as internal and display internal documentation parts
+internal: No
+# Generate documentation for PHP internal classes
+php: No
+# Generate tree view of classes, interfaces and exceptions
+tree: Yes
+# Generate documentation for deprecated classes, methods, properties and constants
+deprecated: Yes
+# Generate documentation of tasks
+todo: Yes
+# Generate highlighted source code files
+sourceCode: Yes

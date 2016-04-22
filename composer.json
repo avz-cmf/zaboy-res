@@ -27,7 +27,10 @@
         "zendframework/zend-stdlib": "~2.7",
         "zendframework/zend-http": "^2.5",
         "zendframework/zend-json": "^2.4",
-        "phpunit/phpunit": "^4.0"
+        "phpunit/phpunit": "^4.0",
+        "fabpot/php-cs-fixer": "@stable",
+        "squizlabs/php_codesniffer": "@stable",
+        "phpmd/phpmd" : "@stable"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.0"
