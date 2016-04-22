@@ -7,7 +7,7 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\res\Middlewares\Factory;
+namespace zaboy\res\Middleware\Factory;
 
 //use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 //uncomment it ^^ for Zend\ServiceManager V3
@@ -53,7 +53,7 @@ class MiddlewareStoreAbstractFactory implements AbstractFactoryInterface
         $isClassName = isset($config['middleware'][$requestedName]['class']);
         if ($isClassName) {
             $requestedClassName = $config['middleware'][$requestedName]['class'];
-            return is_a($requestedClassName, 'zaboy\res\Middlewares\StoreMiddlewareAbstract', true);
+            return is_a($requestedClassName, 'zaboy\res\Middleware\StoreMiddlewareAbstract', true);
         } else {
             return false;
         }

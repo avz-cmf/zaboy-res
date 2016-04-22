@@ -9,8 +9,8 @@
 
 namespace zaboy\res\DataStore;
 
-use zaboy\res\DataStores\DataStoresAbstract;
-use zaboy\res\DataStores\DataStoresException;
+use zaboy\res\DataStore\DataStoresAbstract;
+use zaboy\res\DataStore\DataStoresException;
 use zaboy\res\DataStore\ConditionBuilder\RqlConditionBuilder;
 use Xiag\Rql\Parser\Query;
 use Xiag\Rql\Parser\Node\SortNode;
@@ -75,7 +75,7 @@ class HttpClient extends DataStoresAbstract
         $this->conditionBuilder = new RqlConditionBuilder;
     }
 
-//** Interface "zaboy\res\DataStores\Interfaces\ReadInterface" **/
+//** Interface "zaboy\res\DataStore\Interfaces\ReadInterface" **/
 
     /**
      * {@inheritdoc}
@@ -118,7 +118,7 @@ class HttpClient extends DataStoresAbstract
         return $result;
     }
 
-// ** Interface "zaboy\res\DataStores\Interfaces\DataStoresInterface"  **/
+// ** Interface "zaboy\res\DataStore\Interfaces\DataStoresInterface"  **/
 
     /**
      * {@inheritdoc}
@@ -183,7 +183,6 @@ class HttpClient extends DataStoresAbstract
      */
     public function delete($id)
     {
-        $identifier = $this->getIdentifier();
         $this->checkIdentifierType($id);
         $client = $this->initHttpClient(Request::METHOD_DELETE, null, $id);
         $response = $client->send();

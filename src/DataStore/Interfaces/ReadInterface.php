@@ -7,7 +7,7 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\res\DataStores\Interfaces;
+namespace zaboy\res\DataStore\Interfaces;
 
 use Xiag\Rql\Parser\Query;
 

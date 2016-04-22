@@ -7,10 +7,10 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\res\DataStores;
+namespace zaboy\res\DataStore;
 
-use zaboy\res\DataStores\Interfaces\DataStoresInterface;
-use zaboy\res\DataStores\DataStoresException;
+use zaboy\res\DataStore\Interfaces\DataStoresInterface;
+use zaboy\res\DataStore\DataStoresException;
 use zaboy\res\DataStore\Iterators\DataStoreIterator;
 use Xiag\Rql\Parser\Query;
 use Xiag\Rql\Parser\Node;
@@ -33,11 +33,11 @@ abstract class DataStoresAbstract implements DataStoresInterface
 
     /**
      *
-     * @var \zaboy\res\DataStores\ConditionBuilder\ConditionBuilderAbstract
+     * @var \zaboy\res\DataStore\ConditionBuilder\ConditionBuilderAbstract
      */
     protected $conditionBuilder;
 
-//** Interface "zaboy\res\DataStores\Interfaces\ReadInterface" **/
+//** Interface "zaboy\res\DataStore\Interfaces\ReadInterface" **/
 
     /**
      * {@inheritdoc}
@@ -100,7 +100,7 @@ abstract class DataStoresAbstract implements DataStoresInterface
         return $this->querySelect($result, $query);
     }
 
-// ** Interface "zaboy\res\DataStores\Interfaces\DataStoresInterface"  **/
+// ** Interface "zaboy\res\DataStore\Interfaces\DataStoresInterface"  **/
 
     /**
      * {@inheritdoc}

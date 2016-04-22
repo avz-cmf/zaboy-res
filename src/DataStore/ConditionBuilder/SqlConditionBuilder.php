@@ -9,7 +9,7 @@
 
 namespace zaboy\res\DataStore\ConditionBuilder;
 
-use zaboy\res\DataStores\ConditionBuilder\ConditionBuilderAbstract;
+use zaboy\res\DataStore\ConditionBuilder\ConditionBuilderAbstract;
 use Zend\Db\Adapter\AdapterInterface;
 use Xiag\Rql\Parser\DataType\Glob;
 

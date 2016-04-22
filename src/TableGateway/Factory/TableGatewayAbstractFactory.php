@@ -12,7 +12,7 @@ namespace zaboy\res\TableGateway\Factory;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Metadata\Metadata;
 use Interop\Container\ContainerInterface;
-use zaboy\res\DataStores\factory\DataStoresAbstractFactoryAbstract;
+use zaboy\res\DataStore\Factory\DataStoresAbstractFactoryAbstract;
 
 /**
  * Create and return an instance of the TableGateway

@@ -1,0 +1,38 @@
+<?php
+
+return [
+
+    'dataStore' => [
+        'DataStoreServiceName' => [
+            'class' =>'zaboy\res\DataStore\...',
+            'tableName' => 'db_table_name'
+            ],
+        'DataStoreAnotherServiceName' => [
+            'class' => '...'
+    ]
+
+    'db' => [
+        'adapters' => [
+            'db' => [
+                'driver' => 'Pdo_Mysql',
+                'database' => 'db_name',
+                'username' => 'root',
+                'password' => 'pass'
+            ]
+        ]
+    ]
+
+    'services' => [
+        'factories' => [
+        ],
+        'abstract_factories' => [
+            'zaboy\res\DataStore\Factory\DbTableStoresAbstractFactory',
+            'zaboy\res\DataStore\Factory\MemoryStoresAbstractFactory',
+            'zaboy\res\DataStore\Factory\HttpClientStoresAbstractFactory',
+            'zaboy\res\Middleware\Factory\MiddlewareStoreAbstractFactory',
+            'zaboy\res\TableGateway\Factory\TableGatewayAbstractFactory',
+            'Zend\Db\Adapter\AdapterAbstractServiceFactory'
+        ]
+    ]
+        
+];

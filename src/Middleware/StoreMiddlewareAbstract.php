@@ -7,9 +7,9 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\res\Middlewares;
+namespace zaboy\res\Middleware;
 
-use zaboy\res\DataStores\DataStoresAbstract;
+use zaboy\res\DataStore\DataStoresAbstract;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Stratigility\MiddlewareInterface;

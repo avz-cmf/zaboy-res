@@ -7,9 +7,9 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\res\DataStores\ConditionBuilder;
+namespace zaboy\res\DataStore\ConditionBuilder;
 
-use zaboy\res\DataStores\DataStoresException;
+use zaboy\res\DataStore\DataStoresException;
 use Xiag\Rql\Parser\Node\AbstractQueryNode;
 use Xiag\Rql\Parser\Node\Query\AbstractLogicOperatorNode;
 use Xiag\Rql\Parser\Node\Query\AbstractArrayOperatorNode;

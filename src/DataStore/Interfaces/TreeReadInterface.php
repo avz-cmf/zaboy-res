@@ -6,9 +6,9 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\res\DataStores\Interfaces;
+namespace zaboy\res\DataStore\Interfaces;
 
-use zaboy\res\DataStores\Interfaces\ReadInterface;
+use zaboy\res\DataStore\Interfaces\ReadInterface;
 
 /**
  * TreeRead Interface for DataStores

@@ -7,7 +7,7 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\res\DataStores\Factory;
+namespace zaboy\res\DataStore\Factory;
 
 //use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 //uncomment it ^^ for Zend\ServiceManager V3

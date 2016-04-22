@@ -9,8 +9,8 @@
 
 namespace zaboy\res\DataStore;
 
-use zaboy\res\DataStores\DataStoresAbstract;
-use zaboy\res\DataStores\DataStoresException;
+use zaboy\res\DataStore\DataStoresAbstract;
+use zaboy\res\DataStore\DataStoresException;
 use zaboy\res\DataStore\ConditionBuilder\PhpConditionBuilder;
 
 /**
@@ -37,7 +37,7 @@ class Memory extends DataStoresAbstract
         }
     }
 
-//** Interface "zaboy\res\DataStores\Interfaces\ReadInterface" **/
+//** Interface "zaboy\res\DataStore\Interfaces\ReadInterface" **/
 
     /**
      * {@inheritdoc}
@@ -54,7 +54,7 @@ class Memory extends DataStoresAbstract
         }
     }
 
-// ** Interface "zaboy\res\DataStores\Interfaces\DataStoresInterface"  **/
+// ** Interface "zaboy\res\DataStore\Interfaces\DataStoresInterface"  **/
 
     /**
      * {@inheritdoc}

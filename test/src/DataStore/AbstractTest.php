@@ -10,7 +10,7 @@
 namespace zaboy\test\res\DataStore;
 
 use zaboy\res\DataStore\DbTable;
-use zaboy\res\DataStores\DataStoresAbstract;
+use zaboy\res\DataStore\DataStoresAbstract;
 use Xiag\Rql\Parser\Node\Query\ScalarOperator;
 use Xiag\Rql\Parser\Node\Query\LogicOperator;
 use Xiag\Rql\Parser\Query;
@@ -178,7 +178,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
     public function testCreate_withtIdRewriteException()
     {
         $this->_initObject();
-        $this->setExpectedException('\zaboy\res\DataStores\DataStoresException');
+        $this->setExpectedException('\zaboy\res\DataStore\DataStoresException');
         $this->object->create(
                 array(
             'id' => 2,
@@ -190,7 +190,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
     public function testUpdate_withoutId()
     {
         $this->_initObject();
-        $this->setExpectedException('\zaboy\res\DataStores\DataStoresException');
+        $this->setExpectedException('\zaboy\res\DataStore\DataStoresException');
         $id = $this->object->update(
                 array(
                     'fFloat' => 1000.01,
@@ -225,7 +225,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
     public function testUpdate_withtId_WhichAbsent()
     {
         $this->_initObject();
-        $this->setExpectedException('zaboy\res\DataStores\DataStoresException');
+        $this->setExpectedException('zaboy\res\DataStore\DataStoresException');
         $this->object->update(
                 array(
                     'id' => 1000,
@@ -282,7 +282,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
     public function testDelete_withtId_Null()
     {
         $this->_initObject();
-        $this->setExpectedException('zaboy\res\DataStores\DataStoresException');
+        $this->setExpectedException('zaboy\res\DataStore\DataStoresException');
         $count = $this->object->delete(null);
     }
 

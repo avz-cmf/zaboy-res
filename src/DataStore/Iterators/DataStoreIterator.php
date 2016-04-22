@@ -9,13 +9,13 @@
 
 namespace zaboy\res\DataStore\Iterators;
 
-use zaboy\res\DataStores\Interfaces\ReadInterface;
+use zaboy\res\DataStore\Interfaces\ReadInterface;
 use Xiag\Rql\Parser\Node\Query\ScalarOperator;
 use Xiag\Rql\Parser\Query;
 use Xiag\Rql\Parser\Node;
 
 /**
- * Outer iterator for zaboy\res\DataStores\Read\ReadInterface objects
+ * Outer iterator for zaboy\res\DataStore\Read\ReadInterface objects
  *
  * @category   DataStores
  * @package    DataStores

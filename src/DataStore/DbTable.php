@@ -9,8 +9,8 @@
 
 namespace zaboy\res\DataStore;
 
-use zaboy\res\DataStores\DataStoresAbstract;
-use zaboy\res\DataStores\DataStoresException;
+use zaboy\res\DataStore\DataStoresAbstract;
+use zaboy\res\DataStore\DataStoresException;
 use zaboy\res\DataStore\ConditionBuilder\SqlConditionBuilder;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
@@ -46,7 +46,7 @@ class DbTable extends DataStoresAbstract
         $this->conditionBuilder = new SqlConditionBuilder($db);
     }
 
-//** Interface "zaboy\res\DataStores\Interfaces\ReadInterface" **/
+//** Interface "zaboy\res\DataStore\Interfaces\ReadInterface" **/
 
     /**
      * {@inheritdoc}
@@ -111,7 +111,7 @@ class DbTable extends DataStoresAbstract
         return $rowset->toArray();
     }
 
-// ** Interface "zaboy\res\DataStores\Interfaces\DataStoresInterface"  **/
+// ** Interface "zaboy\res\DataStore\Interfaces\DataStoresInterface"  **/
 
     /**
      * {@inheritdoc}

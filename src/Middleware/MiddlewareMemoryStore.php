@@ -11,7 +11,7 @@ namespace zaboy\res\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use zaboy\res\Middlewares\StoreMiddlewareAbstract;
+use zaboy\res\Middleware\StoreMiddlewareAbstract;
 use zaboy\res\DataStore\Memory;
 
 /**

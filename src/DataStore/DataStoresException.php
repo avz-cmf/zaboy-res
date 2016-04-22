@@ -7,7 +7,7 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\res\DataStores;
+namespace zaboy\res\DataStore;
 
 /**
  * Exception class for DataStores

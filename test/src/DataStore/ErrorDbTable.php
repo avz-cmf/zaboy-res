@@ -10,8 +10,8 @@ namespace zaboy\test\res\DataStore;
 
 use  zaboy\test\res\DataStore\AbstractTest;
 use  Zend\Db\TableGateway\TableGateway;
-use zaboy\res\DataStores\DataStoresAbstract;
-use zaboy\res\DataStores\DataStoresException;
+use zaboy\res\DataStore\DataStoresAbstract;
+use zaboy\res\DataStore\DataStoresException;
 use Xiag\Rql\Parser\Node\Query\ScalarOperator;
 use Xiag\Rql\Parser\Node\Query\LogicOperator;
 use Xiag\Rql\Parser\Query;
