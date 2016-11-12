@@ -1,10 +1,15 @@
 <?php
+
+/**
+ * @license http://opensource.org/licenses/BSD-2-Clause BSD-2-Clause
+ * @copyright Copyright (c) Matthew Weier O'Phinney
+ */
 use Zend\ServiceManager\ServiceManager;
-use Zend\ServiceManager\Config;
-// Create a ServiceManager from service_manager config and register the merged config as a service
-$config = include __DIR__ . '/config.php';
-$configObject = new Config(isset($config['services']) ? $config['services'] : []);
-$sm = new ServiceManager($configObject); // delete ->toArray() for new wersions ServiceManager
-$sm->setService('config', $config);
-// Return the fully configured ServiceManager
-return $sm;
+
+// Load configuration
+$config = require 'config.php';
+// Build container
+$container = new ServiceManager($config['services']);
+// Inject config
+$container->setService('config', $config);
+return $container;

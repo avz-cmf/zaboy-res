@@ -1,54 +1,41 @@
 {
-  "name": "avz-cmf/zaboy-res",
-  "description": "Data store as REST resource",
-  "type": "library",
-  "license": "GPL-3.0",
-  "keywords": [
-    "php",
-    "rest",
-    "data store",
-    "resource"
-  ],
-  
-  "homepage": "https://github.com/avz-cmf/zaboy-res",
-  
-  "support": {
-    "issues": "https://github.com/avz-cmf/zaboy-res/issues",
-    "source": "https://github.com/avz-cmf/zaboy-res"
-  },
-
+    "name": "avz-cmf/zaboy-res",
+    "description": "Data store as REST resource",
+    "type": "library",
+    "license": "GPL-3.0",
+    "keywords": [
+        "php",
+        "rest",
+        "data store",
+        "resource"
+    ],
+    "homepage": "https://github.com/avz-cmf/zaboy-res",
+    "support": {
+        "issues": "https://github.com/avz-cmf/zaboy-res/issues",
+        "source": "https://github.com/avz-cmf/zaboy-res"
+    },
     "require": {
-        "zendframework/zend-stratigility": "^1.1",
-        "zendframework/zend-diactoros": "^1.1",
-        "xiag/rql-parser": "*",
-        "zendframework/zend-db": "^2.7",
-        "zendframework/zend-config": "^2.5",
-        "zendframework/zend-servicemanager": "^2.7",
-        "zendframework/zend-stdlib": "~2.7",
-        "zendframework/zend-http": "^2.5",
-        "zendframework/zend-json": "^2.4",
+        "zendframework/zend-db": "^2.0.1",
+        "zendframework/zend-servicemanager": "^3.0",
+        "zendframework/zend-stdlib": "^3.0.1",
         "phpunit/phpunit": "^4.0",
-        "fabpot/php-cs-fixer": "@stable",
-        "squizlabs/php_codesniffer": "@stable",
-        "phpmd/phpmd" : "@stable"
+        "phpunit/phpunit-skeleton-generator": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.0"
     },
     "autoload": {
-      "psr-4": {
-        "zaboy\\res\\": "src/"
-      }
+        "psr-4": {
+            "zaboy\\res\\": "src/"
+        }
     },
     "autoload-dev": {
-      "psr-4": {
-        "zaboy\\test\\res\\": "test/src/"
-      }
+        "psr-4": {
+            "zaboy\\test\\res\\": "test/src/"
+        }
     },
     "suggest": {
-
     },
     "scripts": {
-
     }
 }

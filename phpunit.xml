@@ -1,0 +1,32 @@
+<phpunit
+ bootstrap="./test/bootstrap.php" 
+ testsuite="error"
+ colors="true"
+ >   
+    
+    <testsuites>         
+        <testsuite name="res">
+           <directory>../test</directory>         
+        </testsuite> 
+    <testsuite name="error">
+      <file>../test/ErrorTest.php</file>
+        </testsuite> 
+     </testsuites>
+
+    <filter>
+        <!-- не смотрим на следующие директории -->
+        <blacklist>
+            <directory suffix=".php">../vendor</directory>
+            <directory suffix=".php">../test</directory>
+        </blacklist>
+        <!-- смотрим лишь на следующие директории -->
+        <whitelist>
+            <directory suffix=".php">../src</directory>
+            <exclude>
+                <directory suffix=".phtml">../src</directory>
+                <file>../src/Bootstrap.php</file>
+            </exclude>
+        </whitelist>
+    </filter>  
+    
+</phpunit>
