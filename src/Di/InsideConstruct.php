@@ -7,7 +7,7 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\Di;
+namespace zaboy\res\Di;
 
 use Interop\Container\ContainerInterface;
 

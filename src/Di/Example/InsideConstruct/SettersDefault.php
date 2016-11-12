@@ -7,9 +7,9 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
 
-namespace zaboy\Di\Example\InsideConstruct;
+namespace zaboy\res\Di\Example\InsideConstruct;
 
-use zaboy\Di\InsideConstruct;
+use zaboy\res\Di\InsideConstruct;
 
 class SettersDefault
 {

@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "zaboy\\res\\": "src/"
+            "zaboy\\res\\": "src/",
+            "zaboy\\test\\res\\": "test/src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "zaboy\\test\\res\\": "test/src/"
         }
     },
     "suggest": {
