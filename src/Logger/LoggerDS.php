@@ -60,8 +60,7 @@ class LoggerDS extends AbstractLogger
 
         $split = preg_split('/\|/', strtr($message, $replace), 2, PREG_SPLIT_NO_EMPTY);
         if (count($split) == 2) {
-            $time = new \DateTime($split[0]);
-            $id = $time->getTimestamp();
+            $id = is_numeric($split[0]) ? $split[0] : (new \DateTime($split[0]))->getTimestamp();
             $message = $split[1];
         } else {
             $id = microtime(true) - date('Z');
@@ -69,7 +68,7 @@ class LoggerDS extends AbstractLogger
         }
 
         $this->logDataStore->create([
-            'time' => $id . "",
+            'id' =>  uniqid("", true) .'_'. $id,
             'level' => $level,
             'message' => $message
         ]);

@@ -11,6 +11,7 @@ namespace zaboy\test\Logger;
 
 use Interop\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Psr\Log\Test\LoggerInterfaceTest;
 use Xiag\Rql\Parser\Query;
 use zaboy\res\Di\InsideConstruct;
@@ -37,12 +38,30 @@ class LoggerDSTest extends LoggerInterfaceTest
         $this->dataStore->deleteAll();
     }
 
-    public function testLog_withTime() {
-
+    /**
+     * @dataProvider provideLogDateTime
+     * @param $dateTime
+     */
+    public function testLog_withTime($dateTime, $expectedTime)
+    {
+        $this->object = $this->getLogger();
+        $this->object->log(LogLevel::ERROR,
+            $dateTime . "|" . "Error message of level emergency with context: {user}",
+            ['user' => 'Bob']);
+        $expected = [
+            $expectedTime . ' ' . LogLevel::ERROR . ' ' .
+            'Error message of level emergency with context: Bob'
+        ];
     }
 
-    public function testLog_withoutTime(){
-
+    public function provideLogDateTime()
+    {
+        $time = new \DateTime();
+        return [
+            [$time->format('Y-m-d H:i:s'), $time->getTimestamp()],
+            [$time->format('D M j G:i:s T Y'), $time->getTimestamp()],
+            [$time->getTimestamp(), $time->getTimestamp()],
+        ];
     }
 
     /**
@@ -68,6 +87,16 @@ class LoggerDSTest extends LoggerInterfaceTest
         $data = $this->dataStore->query(new Query());
         foreach ($data as $item) {
             $logs[] = $item['level'] . " " . $item['message'];
+        }
+        return $logs;
+    }
+
+    public function getLogsWithTime()
+    {
+        $logs = [];
+        $data = $this->dataStore->query(new Query());
+        foreach ($data as $item) {
+            $logs[] = $item['time'] . " " . $item['level'] . " " . $item['message'];
         }
         return $logs;
     }
