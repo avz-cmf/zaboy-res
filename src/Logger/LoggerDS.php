@@ -68,7 +68,7 @@ class LoggerDS extends AbstractLogger
         }
 
         $this->logDataStore->create([
-            'id' =>  uniqid("", true) .'_'. $id,
+            'id' =>  base64_encode(uniqid("", true) .'_'. $id),
             'level' => $level,
             'message' => $message
         ]);

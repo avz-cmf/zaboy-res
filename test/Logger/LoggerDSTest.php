@@ -34,6 +34,7 @@ class LoggerDSTest extends LoggerInterfaceTest
         $container = include './config/container.php';
         $this->container = $container;
         InsideConstruct::setContainer($this->container);
+
         $this->dataStore = $this->container->has('logDataStore') ? $this->container->get('logDataStore') : null;
         $this->dataStore->deleteAll();
     }
@@ -41,6 +42,7 @@ class LoggerDSTest extends LoggerInterfaceTest
     /**
      * @dataProvider provideLogDateTime
      * @param $dateTime
+     * @param $expectedTime
      */
     public function testLog_withTime($dateTime, $expectedTime)
     {

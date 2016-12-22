@@ -1,73 +1,31 @@
 <?php
 
-use Zend\Stratigility\MiddlewarePipe;
-use Zend\Diactoros\Server;
-
-use zaboy\middleware\Middlewares\Factory\RestActionPipeFactory;
-// Change to the project root, to simplify resolving paths
 chdir(dirname(__DIR__));
-// Setup autoloading
-require '/vendor/autoload.php';
+
+require 'vendor/autoload.php';
+
+use Zend\Diactoros\Server;
+use zaboy\rest\Pipe\MiddlewarePipeOptions;
+use zaboy\rest\Pipe\Factory\RestRqlFactory;
+use Zend\Stratigility\Middleware\ErrorHandler;
+use Zend\Stratigility\Middleware\NotFoundHandler;
+use Zend\Stratigility\NoopFinalHandler;
+
+// Define application environment - 'dev' or 'prop'
+if (getenv('APP_ENV') === 'dev') {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    $env = 'develop';
+}
+
 $container = include 'config/container.php';
 
-/**
-//include 'test/src/DataStore/AbstractTest.php';
-include 'test/src/Middlewares/Factory/MiddlewareStoreAbstractFactoryTest.php';
-use zaboy\test\middleware\Middlewares\Factory\MiddlewareStoreAbstractFactoryTest;
-$test = new MiddlewareStoreAbstractFactoryTest();
-//$test->setUp();
-$test->testMiddlewareMemoryStore->__invoke();
+$RestRqlFactory = new RestRqlFactory();
+$rest = $RestRqlFactory($container, '');
 
-
-echo('<!DOCTYPE html><html><head></head><body>');
-echo ( '!!!!!!!!!!!!!!' . PHP_EOL . '<br>');
-echo('</body></html>');
-
-
-
-use zaboy\res\NameSpase;
-use Zend\Db;
-
-$adapter = new Db\Adapter\Adapter(
-    array(
-        'driver' => 'Pdo_Mysql',
-        'database' => 'zav_res',
-        'username' => 'root',
-        'password' => ''
-     )
-);
-
-$qi = function($name) use ($adapter) { return $adapter->platform->quoteIdentifier($name); };
-$fp = function($name) use ($adapter) { return $adapter->driver->formatParameterName($name); };
-
-$statement = $adapter->query('SELECT * FROM '
-    . $qi('res_test')
-    . ' WHERE id = ' . $fp('val_id'));
-
-
-$results = $statement->execute(array('val_id' => 3));
-$row = $results->current();
-$name = $row['notes'];
-
-*/
-
-$memory = $container->get('testMemory');     
-var_dump($memory);
-
-
-$app    = new MiddlewarePipe();
-
-// Landing page
-$app->pipe('/', function ($req, $res, $next) {
-    if (! in_array($req->getUri()->getPath(), ['/', ''], true)) {
-        return $next($req, $res);
-    }
-    return $res->end('Hello world!');
-});
-
-$restPipe = (new RestActionPipeFactory)->__invoke();
-// Another page
-$app->pipe('/rest', $restPipe);
+$app = new MiddlewarePipeOptions(['env' => isset($env) ? $env : null]); //['env' => 'develop']
+$app->raiseThrowables();
+$app->pipe('/api/rest', $rest);
 
 $server = Server::createServer($app, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 $server->listen();

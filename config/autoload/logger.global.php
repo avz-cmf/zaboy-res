@@ -8,7 +8,5 @@
 
 
 return [
-    'aliases' => [
-        'logDataStore' => 'testMemDS'
-    ]
+
 ] ;
