@@ -5,7 +5,7 @@
  >   
     
     <testsuites>         
-        <testsuite name="res">
+        <testsuite name="zaboy\\test\\res\\">
            <directory>../test</directory>         
         </testsuite> 
     <testsuite name="error">
@@ -24,7 +24,7 @@
             <directory suffix=".php">../src</directory>
             <exclude>
                 <directory suffix=".phtml">../src</directory>
-                <file>../src/Bootstrap.php</file>
+                <file>../src/bootstrap.php</file>
             </exclude>
         </whitelist>
     </filter>  
