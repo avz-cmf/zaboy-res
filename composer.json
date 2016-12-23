@@ -28,7 +28,7 @@
     "autoload": {
         "psr-4": {
             "zaboy\\res\\": "src/",
-            "zaboy\\test\\res\\": "test/src/"
+            "zaboy\\test\\": "test/"
         }
     },
     "autoload-dev": {
