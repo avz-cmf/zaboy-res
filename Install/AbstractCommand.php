@@ -34,6 +34,9 @@ abstract class AbstractCommand
     /** @var ContainerInterface */
     private static $container = null;
 
+    /**
+     * @return ContainerInterface
+     */
     private static function getContainer()
     {
         if (!isset(AbstractCommand::$container))
@@ -42,6 +45,14 @@ abstract class AbstractCommand
         return AbstractCommand::$container;
     }
 
+    /**
+     * do command for include installers.
+     * Composer Event - for get dependencies and IO
+     * @param Event $event
+     * Type of command doю
+     * @param $commandType
+     * @param array $installers
+     */
     protected static function command(Event $event, $commandType, array $installers)
     {
         $composer = $event->getComposer();
@@ -49,17 +60,18 @@ abstract class AbstractCommand
         foreach ($dependencies as $dependency) {
             $target = $dependency->getTarget();
             $match = [];
+            //get avz-cmf dependencies and init it.
             if (preg_match('/^avz-cmf\/([\w\-\_]+)$/', $target, $match)) {
                 if (!isset(AbstractCommand::$dep[$match[1]])) {
+                    $class = $match[1] . '\\InstallCommands';
                     AbstractCommand::$dep[$match[1]] = [
-                        "class" => $match[1] . '\\InstallCommands',
-                        "installed" => 0
+                        "class" => $class
                     ];
+                    AbstractCommand::$dep[$match[1]]['installed'] = class_exists($class) ? 0 : -1;
                 }
-                if (!AbstractCommand::$dep[$match[1]]['installed']) {
+                if (AbstractCommand::$dep[$match[1]]['installed'] == 0) {
                     /** @var AbstractCommand $installer */
-                    $installer = new AbstractCommand::$dep[$match[1]];
-                    $installer->{$commandType}($event);
+                    (AbstractCommand::$dep[$match[1]]['class'])::{$commandType}($event);
                 }
             }
         }
