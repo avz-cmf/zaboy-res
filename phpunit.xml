@@ -2,16 +2,14 @@
  bootstrap="./test/bootstrap.php" 
  testsuite="error"
  colors="true"
- >   
-    
-    <testsuites>         
+ >
+
+    <testsuites>
         <testsuite name="zaboy\\test\\res\\">
-           <directory>../test</directory>         
-        </testsuite> 
-    <testsuite name="error">
-      <file>../test/ErrorTest.php</file>
-        </testsuite> 
-     </testsuites>
+            <directory>./test/src</directory>
+        </testsuite>
+
+    </testsuites>
 
     <filter>
         <!-- не смотрим на следующие директории -->

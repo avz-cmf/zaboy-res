@@ -7,11 +7,10 @@
  * Time: 4:02 PM
  */
 
-namespace zaboy\install;
+namespace zaboy\res\Install;
 
 use Composer\Script\Event;
 use Interop\Container\ContainerInterface;
-use zaboy\Install\Installer;
 
 abstract class AbstractCommand
 {

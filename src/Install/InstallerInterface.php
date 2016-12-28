@@ -6,7 +6,7 @@
  * Time: 5:03 PM
  */
 
-namespace zaboy\install;
+namespace zaboy\res\Install;
 
 
 use Interop\Container\ContainerInterface;
