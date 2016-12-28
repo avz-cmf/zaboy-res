@@ -28,12 +28,13 @@ class LoggerDS extends AbstractLogger
         'info',
         'debug'
     ];
+
     /** @var  DataStoresInterface */
     protected $logDataStore;
 
     public function __construct(DataStoresInterface $logDataStore = null)
     {
-        InsideConstruct::initServices();
+        InsideConstruct::initMyServices();
     }
 
     /**

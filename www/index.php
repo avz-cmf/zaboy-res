@@ -28,4 +28,5 @@ $app->raiseThrowables();
 $app->pipe('/api/rest', $rest);
 
 $server = Server::createServer($app, $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
+
 $server->listen();
