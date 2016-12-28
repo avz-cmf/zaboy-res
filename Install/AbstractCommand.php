@@ -60,7 +60,7 @@ abstract class AbstractCommand
         foreach ($dependencies as $dependency) {
             $target = $dependency->getTarget();
             $match = [];
-            //get avz-cmf dependencies and init it.
+            //get avz-cmf dependencies
             if (preg_match('/^avz-cmf\/([\w\-\_]+)$/', $target, $match)) {
                 if (!isset(AbstractCommand::$dep[$match[1]])) {
                     $class = $match[1] . '\\InstallCommands';
@@ -69,6 +69,7 @@ abstract class AbstractCommand
                     ];
                     AbstractCommand::$dep[$match[1]]['installed'] = class_exists($class) ? 0 : -1;
                 }
+                //call command recursive by dep
                 if (AbstractCommand::$dep[$match[1]]['installed'] == 0) {
                     /** @var AbstractCommand $installer */
                     (AbstractCommand::$dep[$match[1]]['class'])::{$commandType}($event);
