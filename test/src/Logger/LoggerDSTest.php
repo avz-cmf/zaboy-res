@@ -6,7 +6,7 @@
  * Time: 11:43 AM
  */
 
-namespace zaboy\test\Logger;
+namespace zaboy\test\res\Logger;
 
 
 use Interop\Container\ContainerInterface;

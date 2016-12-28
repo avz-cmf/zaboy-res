@@ -6,7 +6,7 @@
  * Time: 3:16 PM
  */
 
-namespace zaboy\test\Di;
+namespace zaboy\test\res\Di;
 
 use zaboy\res\Di\Example\ExtendedIC\InheritanceSimpleDependency;
 use zaboy\res\Di\Example\ExtendedIC\SettersDefault;

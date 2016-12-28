@@ -29,13 +29,12 @@
     },
     "autoload": {
         "psr-4": {
-            "zaboy\\res\\": "src/",
-            "zaboy\\install\\": "install/"
+            "zaboy\\res\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "zaboy\\test\\": "test/"
+            "zaboy\\test\\res\\": "test/src"
         }
     },
     "suggest": {

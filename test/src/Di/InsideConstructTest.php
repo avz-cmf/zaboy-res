@@ -1,6 +1,6 @@
 <?php
 
-namespace zaboy\test\Di;
+namespace zaboy\test\res\Di;
 
 
 use zaboy\res\Di\Example\InsideConstruct\PropertiesDefault;
