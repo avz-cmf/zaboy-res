@@ -22,7 +22,8 @@
         "zendframework/zend-stdlib": "^3.0.1",
         "phpunit/phpunit": "^4.0",
         "phpunit/phpunit-skeleton-generator": "*",
-        "avz-cmf/zaboy-rest": "^4.1"
+        "avz-cmf/zaboy-rest": "^4.1",
+        "avz-cmf/zaboy-saas": "^0.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.0"

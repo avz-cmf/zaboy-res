@@ -45,6 +45,17 @@ abstract class AbstractCommand
         return AbstractCommand::$container;
     }
 
+
+    /**
+     * Return status lib or app
+     * @return string
+     */
+    public static function whoIAm()
+    {
+        return preg_match('/\/vendor\//', __DIR__) == 1 ? "lib" : "app";
+    }
+
+
     /**
      * do command for include installers.
      * Composer Event - for get dependencies and IO
