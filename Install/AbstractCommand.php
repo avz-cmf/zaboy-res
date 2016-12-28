@@ -18,9 +18,9 @@ abstract class AbstractCommand
 
     const INSTALL = 'install';
 
-    const CLEAR = 'clear';
+    const UNINSTALL = 'uninstall';
 
-    const RE = 're';
+    const REINSTALL = 'reinstall';
 
     /**
      * avz-cmf [lib-name] => [
@@ -87,11 +87,11 @@ abstract class AbstractCommand
      * @param Event $event
      * @return void
      */
-    abstract public static function clear(Event $event);
+    abstract public static function uninstall(Event $event);
 
     /**
      * @param Event $event
      * @return void
      */
-    abstract public static function re(Event $event);
+    abstract public static function reinstall(Event $event);
 }

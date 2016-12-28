@@ -31,11 +31,11 @@ interface InstallerInterface
      * Clean all installation
      * @return void
      */
-    public function clean();
+    public function uninstall();
 
     /**
      * Make clean and install.
      * @return void
      */
-    public function re();
+    public function reinstall();
 }
