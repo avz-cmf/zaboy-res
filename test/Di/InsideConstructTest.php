@@ -2,10 +2,12 @@
 
 namespace zaboy\test\Di;
 
+
 use zaboy\res\Di\Example\InsideConstruct\PropertiesDefault;
 use zaboy\res\Di\Example\InsideConstruct\SettersDefault;
 use zaboy\res\Di\Example\InsideConstruct\Inheritance;
 use Interop\Container\ContainerInterface;
+
 use zaboy\res\Di\InsideConstruct;
 
 class InsideConstructTest extends \PHPUnit_Framework_TestCase
@@ -127,5 +129,4 @@ class InsideConstructTest extends \PHPUnit_Framework_TestCase
                 'PropNewA value', $tested->propA
         );
     }
-
 }

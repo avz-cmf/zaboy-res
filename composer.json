@@ -15,11 +15,14 @@
         "source": "https://github.com/avz-cmf/zaboy-res"
     },
     "require": {
+        "composer/composer": "^1.0",
+        "composer-plugin-api": "^1.1",
         "zendframework/zend-db": "^2.0.1",
         "zendframework/zend-servicemanager": "^3.0",
         "zendframework/zend-stdlib": "^3.0.1",
         "phpunit/phpunit": "^4.0",
-        "phpunit/phpunit-skeleton-generator": "*"
+        "phpunit/phpunit-skeleton-generator": "*",
+        "avz-cmf/zaboy-rest": "^4.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.0"
@@ -27,11 +30,12 @@
     "autoload": {
         "psr-4": {
             "zaboy\\res\\": "src/",
-            "zaboy\\test\\res\\": "test/src/"
+            "zaboy\\install\\": "install/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "zaboy\\test\\": "test/"
         }
     },
     "suggest": {
